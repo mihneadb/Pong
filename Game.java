@@ -20,16 +20,8 @@ public class Game extends JPanel implements KeyListener, ActionListener {
 	// ball
 	private double ballX, ballY, velX = 0.5, velY = 0.5, ballSize = 20;
 	
-
-	public Game() {
-		this(400, 700);
-	}
 	
-	public Game(int width, int height) {
-		this.height = height;
-		this.width = width;
-		padX = width / 2 - padW / 2;
-
+	public Game() {
 		addKeyListener(this);
 		setFocusable(true);
 		setFocusTraversalKeysEnabled(false);
@@ -40,8 +32,11 @@ public class Game extends JPanel implements KeyListener, ActionListener {
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		Graphics2D g2d = (Graphics2D) g;
+		height = getHeight();
+		width = getWidth();
+		padX = width / 2 - padW / 2;
 		
-		Rectangle2D pad = new Rectangle(padX, 660, padW, padH);
+		Rectangle2D pad = new Rectangle(padX, height - padH, padW, padH);
 		g2d.fill(pad);
 		
 		Ellipse2D ball = new Ellipse2D.Double(ballX, ballY, ballSize, ballSize);
@@ -83,13 +78,5 @@ public class Game extends JPanel implements KeyListener, ActionListener {
 	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub
 
-	}
-
-	public int getHeight() {
-		return height;
-	}
-
-	public int getWidth() {
-		return width;
 	}
 }
