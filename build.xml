@@ -1,0 +1,14 @@
+<project name="Pong" default="run" basedir=".">
+    <target name="build">
+        <mkdir dir="bin/"/>
+        <javac srcdir="." destdir="bin/"/>
+    </target>
+
+    <target name="run" depends="build">
+        <java classname="Main" classpath="bin/" fork="true"/>
+    </target>
+
+    <target name="clean">
+        <delete dir="bin/"/>
+    </target>
+</project>
