@@ -41,7 +41,6 @@ public class Game extends JPanel implements KeyListener, ActionListener {
 		super.paintComponent(g);
 		Graphics2D g2d = (Graphics2D) g;
 		
-		
 		Rectangle2D pad = new Rectangle(padX, 660, padW, padH);
 		g2d.fill(pad);
 		
@@ -72,13 +71,12 @@ public class Game extends JPanel implements KeyListener, ActionListener {
 				
 		switch (code) {
 		case KeyEvent.VK_LEFT:
-			padX -= SPEED;
+			padX -= (padX > 0) ? SPEED : 0;
 			break;
 		case KeyEvent.VK_RIGHT:
-			padX += SPEED;
+			padX += (padX < width - padW) ? SPEED : 0;
 			break;
 		}
-
 	}
 
 	@Override
