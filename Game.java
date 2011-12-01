@@ -22,7 +22,7 @@ public class Game extends JPanel implements KeyListener, ActionListener {
 	
 
 	public Game() {
-		this(400, 800);
+		this(400, 700);
 	}
 	
 	public Game(int width, int height) {
@@ -42,7 +42,7 @@ public class Game extends JPanel implements KeyListener, ActionListener {
 		Graphics2D g2d = (Graphics2D) g;
 		
 		
-		Rectangle2D pad = new Rectangle(padX, 760, padW, padH);
+		Rectangle2D pad = new Rectangle(padX, 660, padW, padH);
 		g2d.fill(pad);
 		
 		Ellipse2D ball = new Ellipse2D.Double(ballX, ballY, ballSize, ballSize);
