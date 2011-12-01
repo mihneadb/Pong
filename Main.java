@@ -11,9 +11,7 @@ public class Main {
 	public static void main(String[] args) {
 		JFrame frm = new JFrame();
 		frm.setTitle("Pong");
-		//frm.setLayout(new BorderLayout());
 		Game g = new Game();
-		//frm.add(g, BorderLayout.CENTER);
 		frm.setContentPane(g);
 		frm.setSize(300, 700);
 		frm.setResizable(false);
