@@ -84,45 +84,45 @@ public class Game extends JPanel implements KeyListener, ActionListener {
 	//
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// side walls
-		if (ballX < 0 || ballX > width - ballSize) {
-			velX = -velX;
+		//Check if the ball collides with the side walls
+		if (ballX < 0 || ballX > width - ballSize) {//If the ball's X position meets with either wall
+			velX = -velX;//Reverse the velocity, making the ball go in the other direction
 		}
-		// top / down walls
-		if (ballY < 0) {
-			velY = -velY;
-			++ scoreBottom;
+		//if the ball hits the bottom wall
+		if (ballY < 0) {//check if the ball's Y position meets the bottom walls
+			velY = -velY;//Reverse the ball's y velocity
+			++ scoreBottom;//Increase the bottom score system
 		}
 		
-		if (ballY + ballSize > height) {
-			velY = -velY;
-			++ scoreTop;
+		if (ballY + ballSize > height) { //If the ball hits the top wall
+			velY = -velY; //Reverse the velocity in the y direction
+			++ scoreTop; //Increase the top score system
 		}
-		// bottom pad
-		if (ballY + ballSize >= height - padH - inset && velY > 0)
-			if (ballX + ballSize >= bottomPadX && ballX <= bottomPadX + padW)
-				velY = -velY;
-
-		// top pad
-		if (ballY <= padH + inset && velY < 0)
-			if (ballX + ballSize >= topPadX && ballX <= topPadX + padW)
-				velY = -velY;
-
-		ballX += velX;
-		ballY += velY;
 		
-		// pressed keys
+		if (ballY + ballSize >= height - padH - inset && velY > 0) //Check to see is within the pad's height
+			if (ballX + ballSize >= bottomPadX && ballX <= bottomPadX + padW)//Check to see if the ball's x position is within the pad's reach
+				velY = -velY;//Reverse the ball's Y velocity
+
+		
+		if (ballY <= padH + inset && velY < 0) //Check to see if the ball is within the top pad's height range
+			if (ballX + ballSize >= topPadX && ballX <= topPadX + padW)//Check to see if the ball's X position is within the pad's reach
+				velY = -velY;// Reverse the Y velocity
+
+		ballX += velX; //Moves the ball in the X direction
+		ballY += velY; //Moves the ball in the Y direction
+		
+		//
 		if (keys.size() == 1) {
-			if (keys.contains("LEFT")) {
-				bottomPadX -= (bottomPadX > 0) ? SPEED : 0;
+			if (keys.contains("LEFT")) { //If "left" key is pressed
+				bottomPadX -= (bottomPadX > 0) ? SPEED : 0; //Move the bottom pad to the left by the value of speed
 			}
-			else if (keys.contains("RIGHT")) {
-				bottomPadX += (bottomPadX < width - padW) ? SPEED : 0;
-			}
+			else if (keys.contains("RIGHT")) {//If "right" key is pressed
+				bottomPadX += (bottomPadX < width - padW) ? SPEED : 0;//Move bottom pad to the right by the value of speed
+ 			}
 		}
 		
-		// AI
-		double delta = ballX - topPadX;
+		
+		double delta = ballX - topPadX; // double variable representing difference betwen BAll po
 		if (delta > 0) {
 			topPadX += (topPadX < width - padW) ? SPEED : 0;
 		}
