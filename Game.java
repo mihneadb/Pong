@@ -123,42 +123,42 @@ public class Game extends JPanel implements KeyListener, ActionListener {
 		
 		
 		double delta = ballX - topPadX; // double variable representing difference betwen BAll po
-		if (delta > 0) {
-			topPadX += (topPadX < width - padW) ? SPEED : 0;
+		if (delta > 0) {// if the difference is greater than 0, meaning the pad is to the left of the ball
+			topPadX += (topPadX < width - padW) ? SPEED : 0;//Move the top pad to the right by the value of speed
 		}
-		else if (delta < 0) {
-			topPadX -= (topPadX > 0) ? SPEED : 0;
+		else if (delta < 0) { // if the difference is less than 0
+			topPadX -= (topPadX > 0) ? SPEED : 0; //Move the top pad to the left by the value of speed
 		}
 		
-		repaint();
+		repaint(); //redraw the canvas with all the updated positions
 	}
 
 	@Override
-	public void keyTyped(KeyEvent e) {}
+	public void keyTyped(KeyEvent e) {} //Required method due to interface use
 
 	@Override
-	public void keyPressed(KeyEvent e) {
-		int code = e.getKeyCode();
-		switch (code) {
-		case KeyEvent.VK_LEFT:
-			keys.add("LEFT");
-			break;
-		case KeyEvent.VK_RIGHT:
-			keys.add("RIGHT");
-			break;
+	public void keyPressed(KeyEvent e) {// Method to respond when user presses key
+		int code = e.getKeyCode(); //Store what key was pressed in integer variable
+		switch (code) { // Create conditionals based on which key has been pressed
+		case KeyEvent.VK_LEFT: // If the left arrow key has been pressed 
+			keys.add("LEFT"); //Add the string "LEFT" to the hash set
+			break;// break the code 
+		case KeyEvent.VK_RIGHT: //If the right arrow key has been pressed 
+			keys.add("RIGHT"); //Add the string "RIGHT" to the hash set
+			break; //break the code
 		}
 	}
 
 	@Override
-	public void keyReleased(KeyEvent e) {
-		int code = e.getKeyCode();
-		switch (code) {
-		case KeyEvent.VK_LEFT:
-			keys.remove("LEFT");
-			break;
-		case KeyEvent.VK_RIGHT:
-			keys.remove("RIGHT");
-			break;
+	public void keyReleased(KeyEvent e) { //method to respond when user releases key
+		int code = e.getKeyCode(); //Store what key was released in integer variable
+		switch (code) { //Create conditionals based on which key has been released
+		case KeyEvent.VK_LEFT: //If the left arrow key has been released 
+			keys.remove("LEFT"); //Remove the "LEFT" string from the hash set
+			break;//Break the code
+		case KeyEvent.VK_RIGHT: //If the right arrow key has been released
+			keys.remove("RIGHT"); //Remove the "RIGHT" String from the hash set
+			break; //Break the code
 		}
 	}
 }
