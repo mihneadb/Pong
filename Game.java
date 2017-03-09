@@ -17,15 +17,15 @@ public class Game extends JPanel implements KeyListener, ActionListener {
 	
 	private int height, width; //integer declarations for screen height and width.
 	private Timer t = new Timer(5, this); //A timer object set to control refresh rate of game
-	private boolean first;
+	private boolean first; //Boolean indicating whether this is the first time the game has started
 	
-	private HashSet<String> keys = new HashSet<String>();
+	private HashSet<String> keys = new HashSet<String>(); //Creates a hashset that accepts string variables
 	
 	//All data information pertaining to pad speed, size and position.
 	private final int SPEED = 1; // A constant integer representing the pad's movement speed.
 	private int padH = 10, padW = 40; //Two integers representing the pad height and width.
-	private int bottomPadX, topPadX; 
-	private int inset = 10;
+	private int bottomPadX, topPadX; //Two integers represeting the X positions of both the top and bottom pad
+	private int inset = 10; //refers to the inset of the two pads
 	
 	// All data pertaining to the the ball, such as ball position, speed and size.
 	private double ballX, ballY, velX = 1, velY = 1, ballSize = 20;//Declerations for the ball's X position on the screen, Y position, Velocity in the X direction and Y direction as well as radius. 
@@ -35,11 +35,11 @@ public class Game extends JPanel implements KeyListener, ActionListener {
 	
 	public Game() {
 		addKeyListener(this); //Allows a "listener" to the game allowing all key inputs to be recorded.
-		setFocusable(true);
-		setFocusTraversalKeysEnabled(false);
-		first = true;
-		t.setInitialDelay(100);
-		t.start();
+		setFocusable(true);// Allows component to gain focus if requested
+		setFocusTraversalKeysEnabled(false);//Sets the focus traversal keys for a given traversal operation for this Component.
+		first = true;// sets first boolean to true since it is starting up for the first time
+		t.setInitialDelay(100);//Sets a delay of 100 milliseconds before starting to load everything up
+		t.start();//Starts the timer
 	}
 	
 	
@@ -65,15 +65,15 @@ public class Game extends JPanel implements KeyListener, ActionListener {
 		
 		Rectangle2D bottomPad = new Rectangle(bottomPadX, height - padH - inset, padW, padH);
 		//Creates a 2D rectangle with 4 parameters, bottomPad's X position, bottomPad's Y position, pad width, pad height
-		g2d.fill(bottomPad);
+		g2d.fill(bottomPad);//adds the bottompad to the screen
 		
 		//Creates a 2D rectangle with 4 parameters, topPad's X position, topPad's Y position, pad width, pad height
 		Rectangle2D topPad = new Rectangle(topPadX, inset, padW, padH);
-		g2d.fill(topPad);
+		g2d.fill(topPad);//adds the toppad to the screen
 		
 		// Creates ball object by using ellipses graphics class. Takes in 4 parameters, Ball's x position, Ball's y position, Ball's radius, Ball's radius.
 		Ellipse2D ball = new Ellipse2D.Double(ballX, ballY, ballSize, ballSize);
-		g2d.fill(ball);
+		g2d.fill(ball);//adds the ball to the screen
 		
 		
 		String scoreB = "Bottom: " + new Integer(scoreBottom).toString();//Create a string that displays the score of the bottom pad
