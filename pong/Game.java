@@ -1,39 +1,68 @@
+package pong;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 import java.util.HashSet;
-
 import javax.swing.*;
 
 
 public class Game extends JPanel implements KeyListener, ActionListener {
 	
 	private int height, width;
+
+	/**
+	 * The Timer "t" fires every 5 milliseconds, and refers to "this",
+	 * namely the current object (an instance of the Game class). In
+	 * general, Timer(n,x) sets up a timer will fire every "n" milliseconds,
+	 * with reference to object "x". Here the "with reference" means that
+	 * the given object should contain a method called "actionPerformed" 
+	 * (which takes a single ActionEvent variable; don't worry about this)
+	 * which is then triggered every "n" milliseconds. In our case, the object is 
+	 * an instance of Game, and the method "actionPerformed" can be found below.
+	 */
 	private Timer t = new Timer(5, this);
 	private boolean first;
 	
 	private HashSet<String> keys = new HashSet<String>();
 	
-	// pad
+	/**
+	 * Initialise variables for the player's paddle. In my reworking of this,
+	 * these will be contained in a separate Paddle class.
+	 */
 	private final int SPEED = 1;
 	private int padH = 10, padW = 40;
 	private int bottomPadX, topPadX;
 	private int inset = 10;
 	
-	// ball
+	/**
+	 * Initialise variables for the ball (puck?). In my reworking of this,
+	 * these will be contained in a separate Puck class.
+	 */
 	private double ballX, ballY, velX = 1, velY = 1, ballSize = 20;
 	
-	// score
+	/**
+	 * Variables keeping track of the scores. These can remain in the Game class
+	 * in my reworking.
+	 */
 	private int scoreTop, scoreBottom;
 	
+	//Zero-variable constructor for the Game class (this is called in Main).
 	public Game() {
 		addKeyListener(this);
 		setFocusable(true);
 		setFocusTraversalKeysEnabled(false);
 		first = true;
+		
+		/**
+		 * Set the initial delay before the timer starts. The subsequent between-calls
+		 * delay has already been set at 5 milliseconds in the definition of "t" above.
+		 */
 		t.setInitialDelay(100);
+		
+		//Start the timer (i.e. the flow of the game).
 		t.start();
 	}
 	
