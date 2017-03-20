@@ -73,7 +73,7 @@ public class Game extends JPanel implements KeyListener, ActionListener {
 		height = getHeight();
 		width = getWidth();
 
-		// initial positioning
+		//Set-up initial positions.
 		if (first) {
 			bottomPadX = width / 2 - padW / 2;
 			topPadX = bottomPadX;
