@@ -50,6 +50,19 @@ public class Ball extends Ellipse2D.Double {
 	}
 	
 	/*
+	 * We define a method which allows us to completely reset all the ball's fields. Think of this
+	 * as a constructor, but which can be called after the ball has been constructed.
+	 */
+	public void resetState(double x, double y, double ballSize, double velX, double velY) {
+		this.x = x;
+		this.y = y;
+		this.height = ballSize;
+		this.width = ballSize;
+		this.velX = velX;
+		this.velY = velY;
+	}
+	
+	/*
 	 * A method updating the position of the ball. This will be called on each call of the timer.
 	 */
 	public void updatePos() {
@@ -109,33 +122,5 @@ public class Ball extends Ellipse2D.Double {
 		if (this.y <= padH + inset && this.velY < 0)
 			if (this.x + this.width >= padX && this.x <= padX + padW)
 				this.velY = -this.velY;
-	}
-	
-	/*
-	 * We define two methods to allow external modification of the ball's position
-	 */
-	public void setX(double x) {
-		this.x = x;
-	}
-	public void setY(double y) {
-		this.y = y;
-	}
-	
-	/*
-	 * We define a method to allow external modification of the ball's size.
-	 */
-	public void setSize(double s) {
-		this.height = s;
-		this.width = s;
-	}
-
-	/*
-	 * We define two methods to allow external modification of the ball's velocity.
-	 */
-	public void setVelX(double velX) {
-		this.velX = velX;
-	}
-	public void setVelY(double velY) {
-		this.velY = velY;
 	}
 }

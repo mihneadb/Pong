@@ -58,9 +58,9 @@ The additional fields and methods contained in each class are given below (we do
 | --- | --- |
 | double ballX | Horizontal position of ball. |
 | double ballY | Vertical position of ball. |
+| double ballSize | Size (diameter) of ball. |
 | double velX | Horizontal velocity of ball. |
 | double velY | Vertical velocity of ball. |
-| double ballSize | Size (diameter) of ball. |
 
 | **Method** | **Description** |
 | --- | --- |
@@ -69,6 +69,7 @@ The additional fields and methods contained in each class are given below (we do
 | string detectTBCollision(int frameHeight) | Detects collision with top and bottom walls, updates velY and returns a string to indicate which of the walls was collided with. |
 | void detectPlayerPadCollision(PlayerPad P, int inset) | Detects collision with player's pad (bottom pad) and updates velY. |
 | void detectAIPadCollision(AIPad P, int inset) | Detects collision with AI's pad (top pad) and updates velY. |
+| void resetState(double ballX, double ballY, double ballSize, double velX, double velY) | Resets all the object's fields to the inputted values. |
 
 ## Scores
 | **Field** | **Description** |

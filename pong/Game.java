@@ -63,7 +63,7 @@ public class Game extends JPanel implements KeyListener, ActionListener {
 	 * Initialise variables for the ball. In my reworking of this,
 	 * these will be contained in a separate Ball class.
 	 */
-	private double velX = 1, velY = 1;
+	private double velX = 2, velY = 2;
 	private double ballSize = 20;
 	private double ballX = width/2 - ballSize/2;
 	private double ballY = height/2 - ballSize/2;
@@ -155,11 +155,7 @@ public class Game extends JPanel implements KeyListener, ActionListener {
 		if (first) {
 			bottomPadX = width / 2 - padW / 2;
 			topPadX = bottomPadX;
-			ball.setX(width/2 - ballSize/2);
-			ball.setY(height/2 - ballSize/2);
-			ball.setSize(ballSize);
-			ball.setVelX(velX);
-			ball.setVelY(velY);
+			ball.resetState(width/2 - ballSize/2, height/2 - ballSize/2, ballSize, velX, velY);
 			first = false;
 		}
 		
@@ -198,8 +194,7 @@ public class Game extends JPanel implements KeyListener, ActionListener {
 	//The following method is that which is called on each iteration of the game loop.
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		height = getHeight();
-		width = getWidth();
+		//We begin by carrying out all the physics for the ball.
 		
 		//Reverse horizontal velocity of ball if it collides with the left or right walls.
 		ball.detectLRCollision(width);
