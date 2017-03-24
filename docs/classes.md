@@ -7,7 +7,7 @@ The structure of these classes is given below:
 * Game **extends** JPanel **implements** KeyListener, ActionListener
 * Pad **extends** Rectangle2D.Double
 * PlayerPad **extends** Pad
-* AIPAD **extends** Pad
+* AIPad **extends** Pad
 * Ball **extends** Ellipse2D.Double
 * Scores
 

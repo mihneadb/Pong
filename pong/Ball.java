@@ -11,10 +11,10 @@ import javax.swing.*;
 public class Ball extends Ellipse2D.Double {
 
 	/*
-	 * See /docs/structure.md for details on the overall class structure. There, as explained, we do
+	 * See docs/classes.md for details on the overall class structure. There, as explained, we do
 	 * not have to implement all of the fields and methods we need because some (but not all) are
 	 * inherited from Ellipse2D.Double. These are the fields ballX, ballY, ballSize (inherited as
-	 * x,y,height) and the methods returnBallX(), returnBallY() (inherited as getX(), getY()).
+	 * x,y,height) and the methods getBallX(), getBallY() (inherited as getX(), getY()).
 	 */
 	
 	/*
@@ -31,13 +31,22 @@ public class Ball extends Ellipse2D.Double {
 	 * We define a constructor method which takes as input the size (diameter) of the ball and the
 	 * initial X and Y positions.
 	 */
-	public Ball(double ballX, double ballY, double ballSize) {
+	public Ball(double ballX, double ballY, double ballSize, double velX, double velY) {
 		/*
 		 * The super keyword here calls the constructor of the superclass (in this case Ellipse2D.Double).
 		 * We use ballSize twice because we want the height and the width of the ellipse to be the same,
 		 * i.e. we want a circle.
 		 */
 		super(ballX, ballY, ballSize, ballSize);
+		this.velX = velX;
+		this.velY = velY;
+	}
+	
+	/*
+	 * We define an alternative no-variables constructor that sets simple values.
+	 */
+	public Ball() {
+		this(0,0,1,1,1);
 	}
 	
 	/*
@@ -113,13 +122,11 @@ public class Ball extends Ellipse2D.Double {
 	}
 	
 	/*
-	 * We define two methods to allow external reading of the velocity of the ball.
+	 * We define a method to allow external modification of the ball's size.
 	 */
-	public double getVelX() {
-		return this.velX;
-	}
-	public double getVelY() {
-		return this.velY;
+	public void setSize(double s) {
+		this.height = s;
+		this.width = s;
 	}
 
 	/*
