@@ -217,7 +217,7 @@ public class Game extends JPanel implements KeyListener, ActionListener {
 		ballY += velY;
 		
 		/*
-		 * Now we have to deal with keypresses. Remember that keys contains the elements "LEFT" or
+		 * Now we have to deal with key presses. Remember that keys contains the elements "LEFT" or
 		 * "RIGHT" (or none) according to whether the left or right keys are currently pressed.
 		 */
 		if (keys.size() == 1) {
