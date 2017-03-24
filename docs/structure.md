@@ -14,4 +14,4 @@ The additional variables and methods contained in each class are:
 
 | **Class** | **Variables** | **Methods** |
 | --- | --- | --- |
-| Game | int height // int width // timer t // HashSet<String> keys // boolean first | |
+| Game | int height <br /> int width <br /> timer t // HashSet<String> keys // boolean first | |
