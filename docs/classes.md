@@ -13,31 +13,98 @@ The structure of these classes is given below:
 
 The additional fields and methods contained in each class are given below (we do not list inherited data structures):
 
-| **Class** | **Fields and Methods** | **Description** |
-| --- | --- | --- |
-| Game | int height <br /> int width <br /> timer t <br /> HashSet(String) keys <br /> boolean first | |
-| Pad | int SPEED <br /> int padH <br /> int padW <br /> int padX | int getPadH() <br /> int getPadW() <br /> int getPadX() <br /> void setPadH(int padH) <br /> void setPadW(int padW) <br /> void setPadX(int padX) |
-| PlayerPad | | void updatePadX(HashSet(String) keys) |
-| AIPad | | void updatePadX(double ballX) |
-| Ball | double ballX <br /> double ballY <br /> double velX <br /> double velY <br /> double ballSize <br /> void updatePos() <br /> void detectLRCollision(int frameWidth) <br /> string detectTBCollision(int frameHeight) <br /> void detectPlayerPadCollision(PlayerPad P, int inset) <br /> void detectAIPadCollision(AIPad P, int inset) | <br /> <br /> <br /> <br /> <br /> Advances one frame by updating ball position, using velX, velY. <br /> Detects collision with left and right walls and updates velX. <br /> Detects collision with top and bottom walls, updates velY and returns a string to indicate whether top or bottom wall has been collided. <br /> Detects collision with player pad and updates velY. <br /> Detects collision with AI pad and updates velY.
-| Scores | int scoreTop <br /> int scoreBottom | void updateScores(double ballY) |
+## Game
+| **Field** | **Description** |
+| --- | --- |
+|int height | Height of the frame. |
+|int width | Width of the frame. |
+|timer t | Timer which triggers the game loop. |
+|HashSet(String) keys | Database of strings keeping track of which keys are pressed. |
+|boolean first | Boolean keeping track of whether or not we are at the start of the game.|
+
+| **Method** | **Description** |
+| --- | --- |
+
+## Pad
+| **Field** | **Description** |
+| --- | ---|
+| int SPEED | Speed of movement. |
+| int padH | Height of the pad. |
+| int padW | Width of the pad. |
+| int padX | Horizontal position of the pad. |
+| int padY | Vertical position of the pad. |
+
+| **Method** | **Description** |
+| --- | --- |
+
+### PlayerPad (extends Pad)
+| **Field** | **Description** |
+| --- | --- |
+
+| **Method** | **Description** |
+| --- | --- |
+| void updatePadX(HashSet(String) keys) | Updates the position of the pad, according to which keys are pressed.|
+
+### AIPAD (extends Pad)
+| **Field** | **Description** |
+| --- | --- |
+
+| **Method** | **Description** |
+| --- | --- |
+| void updatePadX(double ballX) | Updates the position of the pad, according to the horizontal position of the ball.|
+
+## Ball
+| **Field** | **Description** |
+| --- | --- |
+| double ballX | Horizontal position of ball. |
+| double ballY | Vertical position of ball. |
+| double velX | Horizontal velocity of ball. |
+| double velY | Vertical velocity of ball. |
+| double ballSize | Size (diameter) of ball. |
+
+| **Method** | **Description** |
+| --- | --- |
+| void updatePos() | Advances one frame by updating ball position, using velX, velY. |
+| void detectLRCollision(int frameWidth) | Detects collision with left and right walls and updates velX. |
+| string detectTBCollision(int frameHeight) | Detects collision with top and bottom walls, updates velY and returns a string to indicate which of the walls was collided with. |
+| void detectPlayerPadCollision(PlayerPad P, int inset) | Detects collision with player's pad (bottom pad) and updates velY. |
+| void detectAIPadCollision(AIPad P, int inset) | Detects collision with AI's pad (top pad) and updates velY. |
+
+## Scores
+| **Field** | **Description** |
+| --- | --- |
+| int scoreBottom | Player's score |
+| int scoreTop | AI's score |
+
+| **Method** | **Description** |
+| --- | --- |
+| void bottomScores() | Increase scoreBottom by 1. |
+| void topScores() | Increase scoreTop by 1. |
+| int getScoreBottom() | Return scoreBottom. |
+| int getScoreTop() | Return scoreTop. |
 
 Actually, this table is somewhat misleading because some of the fields and methods listed above are inherited from the superclass. We list the relevant data in the table below:
 
-| **Class** | **Fields** | **Methods** |
-| --- | --- | --- |
-| Rectangle2D.Double | | |
-| Ellipse2D.Double | double x (replaces ballX) <br /> double y (replaces ballY) <br /> double height, double width (replace ballSize) | double getX() (replaces getBallX()) <br /> double getY() (replaces getBallY()) |
+## Rectangle2D.Double
+| **Field** | **Acts as** |
+| --- | --- |
+
+| **Method** | **Acts as** |
+| --- | --- |
+
+## Ellipse2D.Double
+| **Field** | **Acts as** |
+| --- | --- |
+| double x | ballX |
+| double y | ballY |
+| double height | ballSize |
+| double width | ballSize |
+
+| **Method** | **Acts as** |
+| --- | --- |
 
 Putting these two tables together, we arrive at a table indicating all the *new* data which must be included within the subclass definition.
 
-| **Class** | **Fields** | **Methods** |
-| --- | --- | --- |
-| Game | int height <br /> int width <br /> timer t <br /> HashSet(String) keys <br /> boolean first | |
-| Pad | int SPEED <br /> int padH <br /> int padW <br /> int padX | int getPadH() <br /> int getPadW() <br /> int getPadX() <br /> void setPadH(int padH) <br /> void setPadW(int padW) <br /> void setPadX(int padX) |
-| PlayerPad | | void updatePadX(HashSet(String) keys) |
-| AIPad | | void updatePadX(double ballX) |
-| Ball | double velX <br /> double velY | double getVelX() <br /> double getVelY() <br /> void setBallX(double ballX) <br /> void setBallY(double ballY) <br /> void setVelX(double velX) <br /> void setVelY(double velY) |
-| Scores | int scoreTop <br /> int scoreBottom | void updateScores(double ballY) |
+[TODO]
 
 Finally, we will also require new constructors for many of the classes.
