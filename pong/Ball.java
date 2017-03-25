@@ -1,12 +1,6 @@
 package pong;
 
-import java.awt.*;
-import java.awt.event.*;
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.Rectangle2D;
-import java.util.HashMap;
-import java.util.HashSet;
-import javax.swing.*;
 
 public class Ball extends Ellipse2D.Double {
 
@@ -107,7 +101,7 @@ public class Ball extends Ellipse2D.Double {
 	 * velocity. Eventually this will take as input a PlayerPad object and inset, but for the moment
 	 * we give as input the individual values: frameHeight, padH, padW, padX, inset.
 	 */
-	public void detectPlayerPadCollision(int frameHeight, int padH, int padW, int padX, int inset) {
+	public void detectPlayerPadCollision(int frameHeight, int padH, int padW, double padX, int inset) {
 		if (this.y+ this.height >= frameHeight - padH - inset && this.velY > 0)
 			if (this.x + this.width >= padX && this.x <= padX + padW)
 				this.velY = -this.velY;
@@ -118,7 +112,7 @@ public class Ball extends Ellipse2D.Double {
 	 * Eventually this will take as input an AIPad object and inset, but for the moment we give as 
 	 * input the individual values: frameHeight, padH, padW, padX, inset.
 	 */
-	public void detectAIPadCollision(int frameHeight, int padH, int padW, int padX, int inset) {
+	public void detectAIPadCollision(int frameHeight, int padH, int padW, double padX, int inset) {
 		if (this.y <= padH + inset && this.velY < 0)
 			if (this.x + this.width >= padX && this.x <= padX + padW)
 				this.velY = -this.velY;

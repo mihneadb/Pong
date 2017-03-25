@@ -15,11 +15,11 @@ import javax.swing.*;
  */
 public class Game extends JPanel implements KeyListener, ActionListener {
 	
-	//Variables to record the height and width of the panel.
+	// Variables to record the height and width of the panel.
 	private int height = getHeight();
 	private int width = getWidth();
 	
-	//Scores object to record the scores.
+	// Scores object to record the scores.
 	private Scores scores = new Scores();
 
 	/**
@@ -54,35 +54,40 @@ public class Game extends JPanel implements KeyListener, ActionListener {
 	 * Initialise variables for the paddle(s). In my reworking of this,
 	 * these will be contained in a separate Pad class.
 	 */
-	private final int SPEED = 1;
+	private final int BOTTOM_SPEED = 2;
+	private final int TOP_SPEED = 2;
 	private int padH = 10, padW = 40;
-	private int bottomPadX, topPadX;
 	private int inset = 10;
+	
+	/*
+	 * Initialise the two paddle objects. Since not all of the game parameters have been set yet,
+	 * we take the default initialisation for the moment; we will reset all the fields later.
+	 */
+	private PlayerPad playerPad = new PlayerPad();
+	private AIPad aiPad = new AIPad();
 	
 	/**
 	 * Initialise variables for the ball. In my reworking of this,
 	 * these will be contained in a separate Ball class.
 	 */
-	private double velX = 2, velY = 2;
+	private final double INIT_VEL_X = 2.5, INIT_VEL_Y = 2.5;
 	private double ballSize = 20;
-	private double ballX = width/2 - ballSize/2;
-	private double ballY = height/2 - ballSize/2;
 	
 	/*
 	 * Initialise the ball object. This depends on the parameters given above.
 	 */
 	private Ball ball = new Ball();
 	
-	//Zero-variable constructor for the Game class (this is called in Main).
+	// Zero-variable constructor for the Game class (this is called in Main).
 	public Game() {
 			
 		/*
 		 * The Game class implements the keyListener interface, which consists of three methods
 		 * (keyTyped, keyPressed and keyReleased) which are invoked whenever a key is typed,
-		 * pressed or released. Below, these methods are defined for this class. As such, Game can
-		 * be viewed as a key listener, so that the method call addKeyListener(this) means that
-		 * we add Game to the list of currently active keyListeners (so that the relevant methods
-		 * will be called when keys are pressed).
+		 * pressed or released. Later, these methods are defined for this class. As such, Game can
+		 * be viewed as a key listener, so that the method call addKeyListener(this) (a method 
+		 * inherited from Component) means that we add Game to the list of currently active
+		 * keyListeners (so that the relevant methods will be called when keys are pressed).
 		 */
 		addKeyListener(this);
 		
@@ -95,8 +100,8 @@ public class Game extends JPanel implements KeyListener, ActionListener {
 		 * For us, this should be the Game component. Although it should be focusable by default, let
 		 * us be careful and explicitly set it (this is what setFocusable(true) does).
 		 * 
-		 * As for the second line: reading the documentation, it seems that there is some issue about
-		 * how key strokes are recorded (and consequently which methods are called). Let us pass
+		 * As for the second line: reading the documentation, it seems that there is some subtle issue
+		 * about how key strokes are recorded (and consequently which methods are called). Let us pass
 		 * over this for the moment, and come back to it later if it causes any problems (I don't
 		 * think it will).
 		 */
@@ -126,6 +131,9 @@ public class Game extends JPanel implements KeyListener, ActionListener {
 	 * Sometimes, if we are extending an abstract class, there are certain abstract (i.e. empty)
 	 * methods in the superclass which must be overridden. This is not the case here (JPanel is
 	 * not an abstract class), but it is worth bearing in mind.
+	 * 
+	 * The "protected" modifier ensures that the method will be visible to any subclasses (but is
+	 * not public in the full sense).
 	 */
 	@Override
 	protected void paintComponent(Graphics g) {
@@ -141,6 +149,10 @@ public class Game extends JPanel implements KeyListener, ActionListener {
 		 * The class is java.awt.Graphics2D (awt standing for "abstract window toolkit"). It extends
 		 * java.awt.Graphics. It has a specified Component onto which it draws (presumably the frame),
 		 * and in-built methods for drawing things (see for instance g2d.fill below).
+		 * 
+		 * The meaning of the following line is to convert g from a Graphics object to a Graphics2D 
+		 * object, which we name g2d. We will then be able to use the methods of g2d (in particular
+		 * g2d.fill(Shape s)) to draw things.
 		 */
 		Graphics2D g2d = (Graphics2D) g;
 		
@@ -151,52 +163,34 @@ public class Game extends JPanel implements KeyListener, ActionListener {
 		height = getHeight();
 		width = getWidth();
 		
-		//Set-up initial positions. The first variable ensures we do not re-do this on each iteration.
+		/*
+		 *  Set-up the intial states of the objects. The first variable ensures we do not re-do
+		 *  this on each iteration.
+		 */
 		if (first) {
-			bottomPadX = width / 2 - padW / 2;
-			topPadX = bottomPadX;
-			ball.resetState(width/2 - ballSize/2, height/2 - ballSize/2, ballSize, velX, velY);
+			playerPad.resetState(padH, padW, width/2 - padW/2, BOTTOM_SPEED, height, inset);
+			aiPad.resetState(padH, padW, width/2 - padW/2, TOP_SPEED, height, inset);
+			ball.resetState(width/2 - ballSize/2, height/2 - ballSize/2, ballSize, INIT_VEL_X, INIT_VEL_Y);
 			first = false;
 		}
 		
-		/*
-		 * Create bottom pad (in my reworking, bottomPad should be a class which extends Rectangle).
-		 * The parameters are, in order: horizontal position, vertical position, width, height.
-		 * See the documentation: there is some confusion about whether this is an instantiation of 
-		 * Rectangle2D or of Rectangle (which is a subclass of Rectangle2D). In any case, it seems
-		 * that only Rectangle has a constructor of the correct format.
-		 * 
-		 * This class has four fields, giving 2D position and 2D dimensions. Note that there is no
-		 * colour field (presumably this comes later?).
-		 */
-		Rectangle2D bottomPad = new Rectangle(bottomPadX, height - padH - inset, padW, padH);
-		g2d.fill(bottomPad);
-		
-		/*
-		 * Create top pad (ditto, but probably a different class to bottomPad because it is computer-
-		 * controlled and so has different behaviour.
-		 */
-		Rectangle2D topPad = new Rectangle(topPadX, inset, padW, padH);
-		g2d.fill(topPad);
-		
-		//Draw the ball (remember that Ball extends Ellipse2D.Double).
+		// Draw all the objects.
+		g2d.fill(this.playerPad);
+		g2d.fill(this.aiPad);
 		g2d.fill(this.ball);
 		
-		/*
-		 * Here we print the scores on to the screen, as strings.
-		 */
+		// Print the scores to the panel, as strings.
 		String scoreB = "Bottom: " + new Integer(scores.getScoreBottom()).toString();
 		String scoreT = "Top: " + new Integer(scores.getScoreTop()).toString();
 		g2d.drawString(scoreB, 10, height / 2);
 		g2d.drawString(scoreT, width - 50, height / 2);
 	}
 	
-	//The following method is that which is called on each iteration of the game loop.
+	// The following method is that which is called on each iteration of the game loop.
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		//We begin by carrying out all the physics for the ball.
 		
-		//Reverse horizontal velocity of ball if it collides with the left or right walls.
+		// Reverse horizontal velocity of ball if it collides with the left or right walls.
 		ball.detectLRCollision(width);
 		
 		/*
@@ -214,57 +208,25 @@ public class Game extends JPanel implements KeyListener, ActionListener {
 		}
 		
 		// Reverse vertical velocity of ball if it collides with bottom pad.
-		ball.detectPlayerPadCollision(height, padH, padW, bottomPadX, inset);
+		ball.detectPlayerPadCollision(height, padH, padW, playerPad.getX(), inset);
 		
 		// Reverse vertical velocity of ball if it collides with top pad.
-		ball.detectAIPadCollision(height, padH, padW, topPadX, inset);
+		ball.detectAIPadCollision(height, padH, padW, aiPad.getX(), inset);
 
 		// Move the ball one frame, as dictated by the current velocities.
 		ball.updatePos();
-				
-		/*
-		 * Now we have to deal with key presses. Remember that keys contains the elements "LEFT" or
-		 * "RIGHT" (or none) according to whether the left or right keys are currently pressed.
-		 */
-		if (keys.size() == 1) {
-			if (keys.contains("LEFT")) {
-				/*
-				 * The mathematical operation here reads: subtract from bottomPadX: SPEED if 
-				 * bottomPadX > 0, otherwise 0. In other words, move the bottom pad left unless
-				 * it is already as far left as it can go.
-				 */
-				bottomPadX -= (bottomPadX > 0) ? SPEED : 0;
-			}
-			else if (keys.contains("RIGHT")) {
-				/*
-				 * Similarly here: move the bottom pad right, unless it is already as far right as
-				 * it can go.
-				 */
-				bottomPadX += (bottomPadX < width - padW) ? SPEED : 0;
-			}
-		}
 		
-		/*
-		 * Finally we must deal with the AI, i.e. the behaviour of the top pad. Basically the AI
-		 * works by constantly trying to align the pad horizontally with the ball.
-		 * 
-		 * In more detail: define a number delta which is the (signed) difference between the ball's
-		 * position and the paddle's position. Then if delta is positive (i.e. if the ball is further
-		 * right than the paddle) move right, and if delta is negative (i.e. the paddle is further
-		 * right) move left (again, only if we are not already at the end).
-		 */
+		// Move the player's paddle as dictated by key presses.
+		playerPad.updatePos(keys, width);
 		
-		double delta = ball.getX() - topPadX;
-		if (delta > 0) {
-			topPadX += (topPadX < width - padW) ? SPEED : 0;
-		}
-		else if (delta < 0) {
-			topPadX -= (topPadX > 0) ? SPEED : 0;
-		}
+		// Move the AI paddle as dictated by the ball position.
+		aiPad.updatePos(ball.getX(), width);
 		
 		/*
 		 * This is a method of JPanel; in fact, the no-parameter version comes from the superclass
-		 * Component. In effect, this calls the paintComponent() method which we overrode above.
+		 * Component. In effect, this calls the paintComponent() method which we overrode above. I
+		 * think it also first gets rid of the previously drawn image (so things don't get drawn on
+		 * top of each other).
 		 */
 		repaint();
 	}
