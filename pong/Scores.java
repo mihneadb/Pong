@@ -8,6 +8,11 @@ public class Scores {
 		scoreTop = 0;
 		scoreBottom = 0;
 	}
+	
+	public void resetState() {
+		scoreTop = 0;
+		scoreBottom = 0;
+	}
 
 	public void bottomScores() {
 		++ this.scoreBottom;
