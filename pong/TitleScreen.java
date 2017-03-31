@@ -11,6 +11,11 @@ import javax.swing.*;
  */
 public class TitleScreen extends JPanel implements KeyListener, ActionListener {
 
+	private boolean first = true;
+	
+	// GraphicsTools object to allow us access to the methods in the GraphicsTools class.
+	private GraphicsTools graphicsTools = new GraphicsTools();
+		
 	// Output strings to be drawn (see the paintComponent method below).
 	private String onePlayer = "1 Player";
 	private String twoPlayers = "2 Players";
@@ -19,8 +24,9 @@ public class TitleScreen extends JPanel implements KeyListener, ActionListener {
 	public String currentSelection = "1Player";
 
 	// Am I going to use these?
+	private Rectangle headerButton = new Rectangle();
 	private Rectangle onePlayerButton = new Rectangle();
-	private Rectangle twoPlayerButton = new Rectangle();
+	private Rectangle twoPlayersButton = new Rectangle();
 	
 	// Timer: to update the screen to respond to key presses.
 	private Timer t = new Timer(50,this);
@@ -46,41 +52,64 @@ public class TitleScreen extends JPanel implements KeyListener, ActionListener {
 		
 		super.paintComponent(g);
 		Graphics2D g2d = (Graphics2D) g;
-		
-		// Set the font for the drawn text.
-		Font buttonsFont = new Font("buttonsFont",1,20);
-		Font headingFont = new Font("headingFont",Font.ITALIC,50);
-		
-		// Set the positions for the strings.
+
+		// Reset the button positions (this only needs to be do once).
 		int height = getHeight();
 		int width = getWidth();
-		int xPos = 2*(width/5);
-		int yPos1 = height/2;
-		int yPos2 = 3*(height/4);
+		if (first) {
+			resetButtonPositions(height,width);
+			first = false;
+		}
 		
-		// Use the keys dictionary to update which button is currently selected.
-		updateCurrentSelection(keys);
+		// Set the font for the drawn text.
+		Font buttonsFont = new Font("buttonsFont",1,15);
+		Font headerFont = new Font("headerFont",Font.BOLD,40);
 		
-		// Draw the heading
-		g2d.setFont(headingFont);
-		g2d.drawString("PONG", 2*(width/5), height/4);
+		/*
+		 * Draw the header. Be careful; there is something strange happening here with variables
+		 * passed into the methods having their values changed (perhaps some data encapsulation
+		 * issue?).
+		 */
+		g2d.setFont(headerFont);
+		graphicsTools.drawRectangleBorder(g2d, this, headerButton, 5, Color.black);
+		graphicsTools.drawCenteredString(g2d, "PONG", headerButton, headerFont, Color.black);
 		
 		// Use a case statement to draw the strings with colouring as controlled by currentSelection.
 		g2d.setFont(buttonsFont);
 		switch (currentSelection) {
 		case "1Player":
-			g2d.setColor(Color.red);
-			g2d.drawString(this.onePlayer, xPos, yPos1);
-			g2d.setColor(Color.black);
-			g2d.drawString(this.twoPlayers, xPos, yPos2);
+			graphicsTools.drawRectangleBorder(g2d, this, onePlayerButton, 3, Color.red);
+			graphicsTools.drawCenteredString(g2d, this.onePlayer, onePlayerButton, buttonsFont, Color.red);
+			graphicsTools.drawRectangleBorder(g2d, this, twoPlayersButton, 3, Color.black);
+			graphicsTools.drawCenteredString(g2d, this.twoPlayers, twoPlayersButton, buttonsFont, Color.black);
 			break;
 		case "2Players":
-			g2d.setColor(Color.black);
-			g2d.drawString(this.onePlayer, xPos, yPos1);
-			g2d.setColor(Color.red);
-			g2d.drawString(this.twoPlayers, xPos, yPos2);
-			break;
+			graphicsTools.drawRectangleBorder(g2d, this, onePlayerButton, 3, Color.black);
+			graphicsTools.drawCenteredString(g2d, this.onePlayer, onePlayerButton, buttonsFont, Color.black);
+			graphicsTools.drawRectangleBorder(g2d, this, twoPlayersButton, 3, Color.red);
+			graphicsTools.drawCenteredString(g2d, this.twoPlayers, twoPlayersButton, buttonsFont, Color.red);
+			break; 
 		}
+	}
+	
+	/*
+	 * Initialises the positions of the buttons, given the height and width of the frame.
+	 */
+	private void resetButtonPositions(int height, int width) {
+		headerButton.width = width/2;
+		headerButton.height = height/4;
+		headerButton.x = width/2 - headerButton.width/2;
+		headerButton.y = height/4;
+		
+		onePlayerButton.width = width/4;
+		onePlayerButton.height = height/6;
+		onePlayerButton.x = width/3 - onePlayerButton.width/2;
+		onePlayerButton.y = 2*(height/3);
+		
+		twoPlayersButton.width = width/4;
+		twoPlayersButton.height = height/6;
+		twoPlayersButton.x = 2*(width/3) - twoPlayersButton.width/2;
+		twoPlayersButton.y = 2*(height/3);
 	}
 
 	/*
@@ -89,12 +118,16 @@ public class TitleScreen extends JPanel implements KeyListener, ActionListener {
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		
+		// Use the keys dictionary to update which button is currently selected.
+		updateCurrentSelection(keys);
+
 		repaint();
 	}
 
 	/*
 	 * We override the abstract (i.e. empty) classes inherited from the keyListener interface, as we
-	 * must. In this case, they simply record the relevant key presses (up and down) in a dictionary.
+	 * must. In this case, they simply record the relevant key presses (left and right) in a set.
 	 * The response to said key presses (in this case, to update the currentSelection field) is given
 	 * by the updateCurrentSelection method below.
 	 * 
@@ -114,11 +147,11 @@ public class TitleScreen extends JPanel implements KeyListener, ActionListener {
 	public void keyPressed(KeyEvent e) {
 		int code = e.getKeyCode();
 		switch (code) {
-		case KeyEvent.VK_DOWN:
-			keys.add("DOWN");
+		case KeyEvent.VK_RIGHT:
+			keys.add("RIGHT");
 			break;
-		case KeyEvent.VK_UP:
-			keys.add("UP");
+		case KeyEvent.VK_LEFT:
+			keys.add("LEFT");
 			break;
 		}		
 	}
@@ -127,11 +160,11 @@ public class TitleScreen extends JPanel implements KeyListener, ActionListener {
 	public void keyReleased(KeyEvent e) {
 		int code = e.getKeyCode();
 		switch (code) {
-		case KeyEvent.VK_DOWN:
-			keys.remove("DOWN");
+		case KeyEvent.VK_RIGHT:
+			keys.remove("RIGHT");
 			break;
-		case KeyEvent.VK_UP:
-			keys.remove("UP");
+		case KeyEvent.VK_LEFT:
+			keys.remove("LEFT");
 			break;
 		}	
 	}
@@ -150,10 +183,10 @@ public class TitleScreen extends JPanel implements KeyListener, ActionListener {
 		 * Updates the current button selection given the input data of the keys.
 		 */
 		if (keys.size() == 1) {
-			if (keys.contains("DOWN")) {
+			if (keys.contains("RIGHT")) {
 				this.currentSelection = "2Players";
 			}
-			if (keys.contains("UP")) {
+			if (keys.contains("LEFT")) {
 				this.currentSelection = "1Player";
 			}
 		}
