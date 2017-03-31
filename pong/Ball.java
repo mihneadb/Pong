@@ -117,4 +117,12 @@ public class Ball extends Ellipse2D.Double {
 			if (this.x + this.width >= padX && this.x <= padX + padW)
 				this.velY = -this.velY;
 	}
+	
+	public double getVelX() {
+		return velX;
+	}
+	
+	public double getVelY() {
+		return velY;
+	}
 }

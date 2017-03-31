@@ -109,6 +109,7 @@ public class Game extends JFrame implements KeyListener {
 			/*
 			 * Here we leave the current game and return to the title screen.
 			 */
+			onePlayer.t.stop();
 			setSize(TITLE_SCREEN_WIDTH, TITLE_SCREEN_HEIGHT);
 			setContentPane(titleScreen);
 			setVisible(true);

@@ -5,8 +5,7 @@ public class Scores {
 	private int scoreTop, scoreBottom;
 	
 	public Scores() {
-		scoreTop = 0;
-		scoreBottom = 0;
+		resetState();
 	}
 	
 	public void resetState() {

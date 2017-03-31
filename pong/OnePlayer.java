@@ -31,15 +31,12 @@ public class OnePlayer extends JPanel implements KeyListener, ActionListener {
 	 * (which takes a single ActionEvent variable; don't worry about this)
 	 * which is then triggered every "n" milliseconds. In our case, the object is 
 	 * an instance of Game, and the method "actionPerformed" can be found below.
+	 * 
+	 * Needs to be public because we have to access it from Game in order to stop it when
+	 * the escape key is pressed.
 	 */
-	private Timer t = new Timer(5, this);
+	public Timer t = new Timer(5, this);
 
-	/* 
-	 * Define a boolean variable which is true before setting up the initial positions,
-	 * and then turns false once these have been set. Think "first" for "first iteration".
-	 */
-//	private boolean first;
-	
 	/*
 	 * As a data structure, this creates a set whose elements are Strings. It is backed by a
 	 * hash table, which basically means that it functions as a dictionary (with keys indexing 
@@ -49,6 +46,9 @@ public class OnePlayer extends JPanel implements KeyListener, ActionListener {
 	 * The currently pressed keys are added to keys in the keysPressed method below.
 	 */
 	private HashSet<String> keys = new HashSet<String>();
+	
+	// Used to execute special code on the first iteration of the timer; see below.
+	private boolean first = true;
 	
 	/**
 	 * Initialise variables for the paddle(s). In my reworking of this,
@@ -82,22 +82,15 @@ public class OnePlayer extends JPanel implements KeyListener, ActionListener {
 	 *  Zero-variable constructor for the class. Since an instantiation of this class appears
 	 *  as a field in the Game class, the constructor is called when the Game object is created
 	 *  (in Main).
+	 *  
+	 *  As such, this isn't really the "true" constructor. There is only ever one OnePlayer object,
+	 *  which we simply reset every time a new game is started (perhaps we will change this later).
+	 *  The "constructor" is really the resetState() method, which sets up the game in its initial
+	 *  state and starts the timer (the timer is stopped externally, from the Game class, whenever
+	 *  the escape key is pressed).
 	 */
 	public OnePlayer() {	
-		/*
-		 * Variable used to keep track of whether we are at the start of a game or not;
-		 * since we are in the constructor, we obviously are.
-		 */
-//		first = true;
-		
-		/**
-		 * Set the initial delay before the timer starts. The subsequent between-calls
-		 * delay has already been set at 5 milliseconds in the definition of "t" above.
-		 */
-//		t.setInitialDelay(100);
-		
-		//Start the timer (i.e. the flow of the game).
-		t.start();
+		resetState();
 	}
 	
 	/*
@@ -140,16 +133,21 @@ public class OnePlayer extends JPanel implements KeyListener, ActionListener {
 		width = getWidth();
 		
 		/*
-		 *  Set-up the intial states of the objects. The first variable ensures we do not re-do
-		 *  this on each iteration.
+		 * There's an annoying issue when transitioning from the title screen to the gameplay.
+		 * When we resize the Game frame, sometimes (though not always) things don't happen
+		 * fast enough, which means that the game timer starts before the frame has been drawn.
+		 * This causes the ball to be placed in the top-left corner, which then means it bounces
+		 * off the walls, which then messes up the starting velocity and the scores.
+		 * 
+		 * I believe that this is really a hardware issue. My current fix is to include the
+		 * following lines, which are called every time we enter the one player phase. (The first
+		 * field is reset in the resetState() command which is called when we start the transition.)
 		 */
-//		if (first) {
-//			playerPad.resetState(padH, padW, width/2 - padW/2, BOTTOM_SPEED, height, inset);
-//			aiPad.resetState(padH, padW, width/2 - padW/2, TOP_SPEED, height, inset);
-//			ball.resetState(width/2 - ballSize/2, height/2 - ballSize/2, ballSize, INIT_VEL_X, INIT_VEL_Y);
-//			first = false;
-//		}
-		
+		if (first) {
+			resetState();
+			first = false;
+		}
+	
 		// Draw all the objects.
 		g2d.fill(this.playerPad);
 		g2d.fill(this.aiPad);
@@ -158,6 +156,8 @@ public class OnePlayer extends JPanel implements KeyListener, ActionListener {
 		// Print the scores to the panel, as strings.
 		String scoreB = "Bottom: " + new Integer(scores.getScoreBottom()).toString();
 		String scoreT = "Top: " + new Integer(scores.getScoreTop()).toString();
+//		String scoreB = "velX: " + new Double(ball.getVelX()).toString();
+	//	String scoreT = "velY: " + new Double(ball.getVelY()).toString();
 		g2d.drawString(scoreB, 10, height / 2);
 		g2d.drawString(scoreT, width - 50, height / 2);
 	}
@@ -264,6 +264,7 @@ public class OnePlayer extends JPanel implements KeyListener, ActionListener {
 		aiPad.resetState(padH, padW, width/2 - padW/2, TOP_SPEED, height, inset);
 		ball.resetState(width/2 - ballSize/2, height/2 - ballSize/2, ballSize, INIT_VEL_X, INIT_VEL_Y);
 		scores.resetState();
+		first = true;
+		t.start();
 	}
-
 }
