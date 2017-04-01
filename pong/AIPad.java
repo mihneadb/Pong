@@ -4,7 +4,7 @@ public class AIPad extends Pad {
 
 	public AIPad(int padH, int padW, int padX, int speed, int height, int inset) {
 		super(padH,padW,padX, speed);
-		this.y = inset;
+		y = inset;
 	}
 	
 	public AIPad() {
@@ -14,7 +14,7 @@ public class AIPad extends Pad {
 	@Override
 	public void resetState(int padH, int padW, int padX, int speed, int height, int inset) {
 		super.resetState(padH, padW, padX, speed, height, inset);
-		this.y = inset;
+		y = inset;
 	}
 	
 	/*
@@ -23,14 +23,13 @@ public class AIPad extends Pad {
 	 * width of the frame.
 	 */
 	public void updatePos(double ballX, int width) {
-		double delta = ballX - this.x;
+		double delta = ballX - x;
 		if (delta > 0) {
-			this.x += (this.x < width - this.width) ? this.speed : 0;
+			x += (x < width - this.width) ? speed : 0;
 		}
 		else if (delta < 0) {
-			this.x -= (this.x > 0) ? this.speed : 0;
+			x -= (x > 0) ? speed : 0;
 		}
-	
 	}
 	
 }

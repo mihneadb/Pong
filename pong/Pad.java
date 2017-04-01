@@ -11,9 +11,9 @@ public class Pad extends Rectangle2D.Double {
 	protected int speed;
 	
 	public Pad(int padH, int padW, int padX, int speed) {
-		this.height = padH;
-		this.width = padW;
-		this.x = padX;
+		height = padH;
+		width = padW;
+		x = padX;
 		this.speed = speed;
 	}
 	
@@ -28,8 +28,8 @@ public class Pad extends Rectangle2D.Double {
 	 */
 	public void resetState(int padH, int padW, int padX, int speed, int height, int inset) {
 		this.height = padH;
-		this.width = padW;
-		this.x = padX;
+		width = padW;
+		x = padX;
 		this.speed = speed;
 	}
 
