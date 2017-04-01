@@ -19,11 +19,15 @@ public class TitleScreen extends JPanel implements KeyListener, ActionListener {
 	// Output strings to be drawn (see the paintComponent method below).
 	private String onePlayer = "1 Player";
 	private String twoPlayers = "2 Players";
+	
+	// Fonts for the drawn text.
+	Font buttonsFont = new Font("buttonsFont",1,15);
+	Font headerFont = new Font("headerFont",Font.BOLD,40);
 
 	// String to keep track of the currently selected button.
 	public String currentSelection = "1Player";
 
-	// Am I going to use these?
+	// Rectangle objects which will serve as the button borders.
 	private Rectangle headerButton = new Rectangle();
 	private Rectangle onePlayerButton = new Rectangle();
 	private Rectangle twoPlayersButton = new Rectangle();
@@ -60,34 +64,47 @@ public class TitleScreen extends JPanel implements KeyListener, ActionListener {
 			resetButtonPositions(height,width);
 			first = false;
 		}
-		
-		// Set the font for the drawn text.
-		Font buttonsFont = new Font("buttonsFont",1,15);
-		Font headerFont = new Font("headerFont",Font.BOLD,40);
-		
+	
 		/*
 		 * Draw the header. Be careful; there is something strange happening here with variables
 		 * passed into the methods having their values changed (perhaps some data encapsulation
 		 * issue?).
 		 */
+		drawHeader(g2d);
+		
+		// Draw the buttons.
+		drawButtons(g2d);
+	}
+	
+	/*
+	 * A method which draws the header, based on the state of the fields headerButton, headerFont.
+	 * Takes as input the Graphics2D object which does the drawing.
+	 */
+	private void drawHeader(Graphics2D g2d) {
 		g2d.setFont(headerFont);
 		graphicsTools.drawRectangleBorder(g2d, this, headerButton, 5, Color.black);
 		graphicsTools.drawCenteredString(g2d, "PONG", headerButton, headerFont, Color.black);
-		
-		// Use a case statement to draw the strings with colouring as controlled by currentSelection.
+	}
+	
+	/*
+	 * A method which draws the buttons, with colouring based on the state of currentSelection. We
+	 * use a switch statement for this. The other object fields which the output depends on are 
+	 * onePlayerButton, onePlayer, twoPlayersButton, twoPlayers.
+	 */
+	private void drawButtons(Graphics2D g2d) {
 		g2d.setFont(buttonsFont);
 		switch (currentSelection) {
 		case "1Player":
 			graphicsTools.drawRectangleBorder(g2d, this, onePlayerButton, 3, Color.red);
-			graphicsTools.drawCenteredString(g2d, this.onePlayer, onePlayerButton, buttonsFont, Color.red);
+			graphicsTools.drawCenteredString(g2d, onePlayer, onePlayerButton, buttonsFont, Color.red);
 			graphicsTools.drawRectangleBorder(g2d, this, twoPlayersButton, 3, Color.black);
-			graphicsTools.drawCenteredString(g2d, this.twoPlayers, twoPlayersButton, buttonsFont, Color.black);
+			graphicsTools.drawCenteredString(g2d, twoPlayers, twoPlayersButton, buttonsFont, Color.black);
 			break;
 		case "2Players":
 			graphicsTools.drawRectangleBorder(g2d, this, onePlayerButton, 3, Color.black);
-			graphicsTools.drawCenteredString(g2d, this.onePlayer, onePlayerButton, buttonsFont, Color.black);
+			graphicsTools.drawCenteredString(g2d, onePlayer, onePlayerButton, buttonsFont, Color.black);
 			graphicsTools.drawRectangleBorder(g2d, this, twoPlayersButton, 3, Color.red);
-			graphicsTools.drawCenteredString(g2d, this.twoPlayers, twoPlayersButton, buttonsFont, Color.red);
+			graphicsTools.drawCenteredString(g2d, twoPlayers, twoPlayersButton, buttonsFont, Color.red);
 			break; 
 		}
 	}
@@ -118,10 +135,9 @@ public class TitleScreen extends JPanel implements KeyListener, ActionListener {
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		
 		// Use the keys dictionary to update which button is currently selected.
 		updateCurrentSelection(keys);
-
+		// Repaint the Component (see the paintComponent() method above).
 		repaint();
 	}
 
@@ -184,17 +200,17 @@ public class TitleScreen extends JPanel implements KeyListener, ActionListener {
 		 */
 		if (keys.size() == 1) {
 			if (keys.contains("RIGHT")) {
-				this.currentSelection = "2Players";
+				currentSelection = "2Players";
 			}
 			if (keys.contains("LEFT")) {
-				this.currentSelection = "1Player";
+				currentSelection = "1Player";
 			}
 		}
 	}
 	
 	public void resetState() {
 		currentSelection = "1Player";
+		first = true;
 	}
-
 
 }

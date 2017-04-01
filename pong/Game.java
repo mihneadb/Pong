@@ -117,25 +117,24 @@ public class Game extends JFrame implements KeyListener {
 			currentPhase = "TitleScreen";
 		}
 		
-		switch (this.currentPhase) {
+		switch (currentPhase) {
 		case "TitleScreen":
-			this.titleScreen.keyPressed(e);
+			titleScreen.keyPressed(e);
 			break;
 		case "OnePlayer":
-			this.onePlayer.keyPressed(e);
+			onePlayer.keyPressed(e);
 			break;
 		}
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		
-		switch (this.currentPhase) {
+		switch (currentPhase) {
 		case "TitleScreen":
-			this.titleScreen.keyReleased(e);
+			titleScreen.keyReleased(e);
 			break;
 		case "OnePlayer":
-			this.onePlayer.keyReleased(e);
+			onePlayer.keyReleased(e);
 			break;
 		}
 	}
@@ -145,6 +144,7 @@ public class Game extends JFrame implements KeyListener {
 	 * include it
 	 */
 	@Override
-	public void keyTyped(KeyEvent e) {}
+	public void keyTyped(KeyEvent e) {
+	}
 
 }

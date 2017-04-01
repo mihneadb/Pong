@@ -7,7 +7,7 @@ public class PlayerPad extends Pad {
 	// The constructor calls the constructor for Pad, and also sets the y position accordingly.
 	public PlayerPad(int padH, int padW, int padX, int speed, int height, int inset) {
 		super(padH,padW,padX, speed);
-		this.y = height - padH - inset;
+		y = height - padH - inset;
 	}
 	
 	public PlayerPad() {
@@ -17,7 +17,7 @@ public class PlayerPad extends Pad {
 	@Override
 	public void resetState(int padH, int padW, int padX, int speed, int height, int inset) {
 		super.resetState(padH, padW, padX, speed, height, inset);
-		this.y = height - inset - padH;
+		y = height - inset - padH;
 	}
 	
 	/*
@@ -36,14 +36,14 @@ public class PlayerPad extends Pad {
 				 * this.x > 0, otherwise 0. In other words, move the bottom pad left unless
 				 * it is already as far left as it can go.
 				 */
-				this.x -= (this.x > 0) ? this.speed : 0;
+				x -= (x > 0) ? speed : 0;
 			}
 			else if (keys.contains("RIGHT")) {
 				/*
 				 * Similarly here: move the bottom pad right, unless it is already as far right as
 				 * it can go.
 				 */
-				this.x += (this.x < width - this.width) ? this.speed : 0;
+				x += (x < width - this.width) ? speed : 0;
 			}
 		}
 	}

@@ -11,7 +11,7 @@ import java.awt.geom.Rectangle2D;
 import javax.swing.JPanel;
 
 /*
- * Class containing a number of graphics tools for use in the main program.
+ * Toolbox class containing a number of graphics tools for use in the main program.
  */
 public class GraphicsTools {
 	
@@ -23,22 +23,21 @@ public class GraphicsTools {
 	 * exist (and already have been drawn).
 	 * 
 	 * We make use of this in the TitleScreen class.
-	 *
-	 * @param g The Graphics instance.
-	 * @param text The String to draw.
-	 * @param rect The Rectangle to centre the text in.
 	 */
 	public void drawCenteredString(Graphics2D g2d, String text, Rectangle rect, Font font, Color color) {
-	    // Get the FontMetrics
+	    // The FontMetrics object will allow us to work out the size (in pixels) of the drawn string.
 	    FontMetrics metrics = g2d.getFontMetrics(font);
-	    // Determine the X coordinate for the text
+	    // Determine the x coordinate for the text.
 	    int x = rect.x + (rect.width - metrics.stringWidth(text)) / 2;
-	    // Determine the Y coordinate for the text (note we add the ascent, as in java 2d 0 is top of the screen)
+	    /*
+	     *  Determine the y coordinate for the text (note we add the ascent, as in java 2d
+	     *  0 is top of the screen)
+	     */
 	    int y = rect.y + ((rect.height - metrics.getHeight()) / 2) + metrics.getAscent();
 	    // Set the font and colour.
 	    g2d.setFont(font);
 	    g2d.setColor(color);
-	    // Draw the String
+	    // Draw the string.
 	    g2d.drawString(text, x, y);
 	}
 	

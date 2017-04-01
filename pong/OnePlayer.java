@@ -149,9 +149,9 @@ public class OnePlayer extends JPanel implements KeyListener, ActionListener {
 		}
 	
 		// Draw all the objects.
-		g2d.fill(this.playerPad);
-		g2d.fill(this.aiPad);
-		g2d.fill(this.ball);
+		g2d.fill(playerPad);
+		g2d.fill(aiPad);
+		g2d.fill(ball);
 		
 		// Print the scores to the panel, as strings.
 		String scoreB = "Bottom: " + new Integer(scores.getScoreBottom()).toString();

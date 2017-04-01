@@ -50,8 +50,8 @@ public class Ball extends Ellipse2D.Double {
 	public void resetState(double x, double y, double ballSize, double velX, double velY) {
 		this.x = x;
 		this.y = y;
-		this.height = ballSize;
-		this.width = ballSize;
+		height = ballSize;
+		width = ballSize;
 		this.velX = velX;
 		this.velY = velY;
 	}
@@ -60,8 +60,8 @@ public class Ball extends Ellipse2D.Double {
 	 * A method updating the position of the ball. This will be called on each call of the timer.
 	 */
 	public void updatePos() {
-		this.x += this.velX;
-		this.y += this.velY;
+		x += velX;
+		y += velY;
 	}
 	
 	/* 
@@ -70,8 +70,8 @@ public class Ball extends Ellipse2D.Double {
 	 * right wall).
 	 */
 	public void detectLRCollision(int frameWidth) {
-		if (this.x < 0 || this.x > frameWidth - this.width) {
-			this.velX = -this.velX;
+		if (x < 0 || x > frameWidth - width) {
+			velX = -velX;
 		}
 	}
 	
@@ -82,14 +82,14 @@ public class Ball extends Ellipse2D.Double {
 	 */
 	public String detectTBCollision(int frameHeight) {
 		String side = "";
-		
-		if (this.y < 0) {
-			this.velY = -this.velY;
+
+		if (y < 0) {
+			velY = -velY;
 			side = "T";
 		}
 		
-		if (this.y + this.height > frameHeight) {
-			this.velY = -this.velY;
+		if (y + height > frameHeight) {
+			velY = -velY;
 			side = "B";
 		}
 		
@@ -102,9 +102,9 @@ public class Ball extends Ellipse2D.Double {
 	 * we give as input the individual values: frameHeight, padH, padW, padX, inset.
 	 */
 	public void detectPlayerPadCollision(int frameHeight, int padH, int padW, double padX, int inset) {
-		if (this.y+ this.height >= frameHeight - padH - inset && this.velY > 0)
-			if (this.x + this.width >= padX && this.x <= padX + padW)
-				this.velY = -this.velY;
+		if (y+ height >= frameHeight - padH - inset && velY > 0)
+			if (x + width >= padX && x <= padX + padW)
+				velY = -velY;
 	}
 	
 	/*
@@ -113,9 +113,9 @@ public class Ball extends Ellipse2D.Double {
 	 * input the individual values: frameHeight, padH, padW, padX, inset.
 	 */
 	public void detectAIPadCollision(int frameHeight, int padH, int padW, double padX, int inset) {
-		if (this.y <= padH + inset && this.velY < 0)
-			if (this.x + this.width >= padX && this.x <= padX + padW)
-				this.velY = -this.velY;
+		if (y <= padH + inset && velY < 0)
+			if (x + width >= padX && x <= padX + padW)
+				velY = -velY;
 	}
 	
 	public double getVelX() {

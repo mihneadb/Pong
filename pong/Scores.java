@@ -14,19 +14,19 @@ public class Scores {
 	}
 
 	public void bottomScores() {
-		++ this.scoreBottom;
+		++ scoreBottom;
 	}
 	
 	public void topScores() {
-		++ this.scoreTop;
+		++ scoreTop;
 	}
 	
 	public int getScoreTop() {
-		return this.scoreTop;
+		return scoreTop;
 	}
 	
 	public int getScoreBottom() {
-		return this.scoreBottom;
+		return scoreBottom;
 	}
 	
 }
