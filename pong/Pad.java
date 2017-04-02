@@ -22,11 +22,11 @@ public class Pad extends Rectangle2D.Double {
 	 * (extended) in each of the subclasses PlayerPad and AIPad, to account for the different required
 	 * values of y.
 	 * 
-	 * Note that the parameters height and inset are not used here; but they will be used in the later
-	 * overrides, so we have to include them here as well since otherwise the parameter structure will
-	 * be wrong.
+	 * Note that the parameters height, inset and whichPlayer are not used here; but they will be used
+	 * in the later overrides, so we have to include them here as well since otherwise the parameter
+	 * structure will be wrong.
 	 */
-	public void resetState(int padH, int padW, int padX, int speed, int height, int inset) {
+	public void resetState(int padH, int padW, int padX, int speed, int height, int inset, int whichPlayer) {
 		this.height = padH;
 		width = padW;
 		x = padX;
