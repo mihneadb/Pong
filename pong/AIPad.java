@@ -12,8 +12,8 @@ public class AIPad extends Pad {
 	}
 	
 	@Override
-	public void resetState(int padH, int padW, int padX, int speed, int height, int inset) {
-		super.resetState(padH, padW, padX, speed, height, inset);
+	public void resetState(int padH, int padW, int padX, int speed, int height, int inset, int whichPlayer) {
+		super.resetState(padH, padW, padX, speed, height, inset, whichPlayer);
 		y = inset;
 	}
 	

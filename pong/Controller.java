@@ -5,7 +5,7 @@ import java.awt.event.KeyListener;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-public class Game extends JFrame implements KeyListener {
+public class Controller extends JFrame implements KeyListener {
 	
 	/*
 	 * This class extends JFrame, and acts as the frame in which the game content is held. It
@@ -32,7 +32,7 @@ public class Game extends JFrame implements KeyListener {
 	private TitleScreen titleScreen = new TitleScreen();
 	private OnePlayer onePlayer = new OnePlayer();
 	
-	public Game() {
+	public Controller() {
 		
 		/*
 		 * The constructor method sets up the title screen.

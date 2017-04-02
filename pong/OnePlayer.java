@@ -156,8 +156,6 @@ public class OnePlayer extends JPanel implements KeyListener, ActionListener {
 		// Print the scores to the panel, as strings.
 		String scoreB = "Bottom: " + new Integer(scores.getScoreBottom()).toString();
 		String scoreT = "Top: " + new Integer(scores.getScoreTop()).toString();
-//		String scoreB = "velX: " + new Double(ball.getVelX()).toString();
-	//	String scoreT = "velY: " + new Double(ball.getVelY()).toString();
 		g2d.drawString(scoreB, 10, height / 2);
 		g2d.drawString(scoreT, width - 50, height / 2);
 	}
@@ -233,6 +231,14 @@ public class OnePlayer extends JPanel implements KeyListener, ActionListener {
 		case KeyEvent.VK_RIGHT:
 			keys.add("RIGHT");
 			break;
+		case KeyEvent.VK_A:
+			System.out.println("A pressed");
+			keys.add("A");
+			break;
+		case KeyEvent.VK_D:
+			System.out.println("D pressed");
+			keys.add("D");
+			break;
 		}
 	}
 	
@@ -245,6 +251,14 @@ public class OnePlayer extends JPanel implements KeyListener, ActionListener {
 			break;
 		case KeyEvent.VK_RIGHT:
 			keys.remove("RIGHT");
+			break;
+		case KeyEvent.VK_A:
+			System.out.println("A released");
+			keys.remove("A");
+			break;
+		case KeyEvent.VK_D:
+			System.out.println("D released");
+			keys.remove("D");
 			break;
 		}
 	}
@@ -260,8 +274,8 @@ public class OnePlayer extends JPanel implements KeyListener, ActionListener {
 	public void resetState() {
 		int height = getHeight();
 		int width = getWidth();
-		playerPad.resetState(padH, padW, width/2 - padW/2, BOTTOM_SPEED, height, inset);
-		aiPad.resetState(padH, padW, width/2 - padW/2, TOP_SPEED, height, inset);
+		playerPad.resetState(padH, padW, width/2 - padW/2, BOTTOM_SPEED, height, inset,2);
+		aiPad.resetState(padH, padW, width/2 - padW/2, TOP_SPEED, height, inset,0);
 		ball.resetState(width/2 - ballSize/2, height/2 - ballSize/2, ballSize, INIT_VEL_X, INIT_VEL_Y);
 		scores.resetState();
 		first = true;
