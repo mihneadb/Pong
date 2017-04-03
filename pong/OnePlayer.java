@@ -8,12 +8,19 @@ import java.util.HashMap;
 import java.util.HashSet;
 import javax.swing.*;
 
+import pong.TitleScreen.LeftAction;
+import pong.TitleScreen.RightAction;
+
 /*
  * The KeyListener is so that the instances of Game can listen for key strokes, and
  * the ActionListener interface is so that they can listen for action events, in this
  * case triggers from the timer (to implement the game loop).
  */
-public class OnePlayer extends JPanel implements KeyListener, ActionListener {
+public class OnePlayer extends JPanel implements ActionListener {
+	
+	// Action objects to pass to getActionMap().
+	private LeftAction leftAction = new LeftAction();
+	private RightAction rightAction = new RightAction();
 	
 	// Variables to record the height and width of the panel.
 	private int height = getHeight();
@@ -38,23 +45,14 @@ public class OnePlayer extends JPanel implements KeyListener, ActionListener {
 	public Timer t = new Timer(5, this);
 
 	/*
-	 * As a data structure, this creates a set whose elements are Strings. It is backed by a
-	 * hash table, which basically means that it functions as a dictionary (with keys indexing 
-	 * values).
-	 * 
-	 * More importantly, this data structure is used to keep track of which keys are being pressed.
-	 * The currently pressed keys are added to keys in the keysPressed method below.
+	 *  Used to execute special code on the first iteration of the timer; see below. Public so
+	 *  that we can access it from GameFrame.
 	 */
-	private HashSet<String> keys = new HashSet<String>();
 	
-	// Used to execute special code on the first iteration of the timer; see below.
-	private boolean first = true;
+	public boolean first = true;
 	
-	/**
-	 * Initialise variables for the paddle(s). In my reworking of this,
-	 * these will be contained in a separate Pad class.
-	 */
-	private final int BOTTOM_SPEED = 2;
+	// Variables for the initial states of the paddles.
+	private final int BOTTOM_SPEED = 10;
 	private final int TOP_SPEED = 2;
 	private int padH = 10, padW = 40;
 	private int inset = 10;
@@ -89,10 +87,74 @@ public class OnePlayer extends JPanel implements KeyListener, ActionListener {
 	 *  state and starts the timer (the timer is stopped externally, from the Game class, whenever
 	 *  the escape key is pressed).
 	 */
-	public OnePlayer() {	
+	public OnePlayer() {
+		/*
+		 * Map the key bindings. You might wonder why I don't do this in the PlayerPad class. Arguably
+		 * this is what I should have done, however, the PlayerPad class does not extend Component (or
+		 * any of its subclasses), and as such does not have the necessary getInputMap, getActionMap
+		 * methods. Perhaps this indicates that PlayerPad *should* extend Component (or JPanel or
+		 * something), but for the moment I'll leave it as it is.
+		 * 
+		 * A word on the key bindings. The method getInputMap(int condition) takes an integer argument,
+		 * which is one of: JComponent.WHEN_FOCUSED, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT and 
+		 * JComponent.WHEN_IN_FOCUSED_WINDOW. The argument determines when the corresponding action
+		 * methods will be called in response to key strokes. In our case, the window GameFrame
+		 * always has focused, so we want to react to keystrokes when our panel (OnePlayer) is
+		 * in the frame.
+		 * 
+		 * There is also a getInputMap() method without any arguments, which is simply the above method
+		 * with the default JComponent.WHEN_FOCUSED argument.
+		 */
+		getInputMap(OnePlayer.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("LEFT"), "LEFT");
+		getActionMap().put("LEFT", leftAction);
+		getInputMap(OnePlayer.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("RIGHT"), "RIGHT");
+		getActionMap().put("RIGHT", rightAction);
 		resetState();
 	}
 	
+	// The following method is that which is called on each iteration of the game loop.
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		
+		// Reverse horizontal velocity of ball if it collides with the left or right walls.
+		ball.detectLRCollision(width);
+		
+		/*
+		 * Reverse vertical velocity of ball, and record which wall was hit, if it collides with
+		 * the top or bottom walls (in my reworking of this, we could change this so that if it
+		 * collides with top or bottoms walls, the ball gets reset in the middle with a fixed velocity).
+		 */
+		String scorer = ball.detectTBCollision(height);
+		//Update scores, depending on which wall was hit.
+		if (scorer=="T") {
+			scores.bottomScores();
+		}
+		if (scorer=="B") {
+			scores.topScores();
+		}
+		
+		// Reverse vertical velocity of ball if it collides with bottom pad.
+		ball.detectPlayerPadCollision(height, padH, padW, playerPad.getX(), inset);
+		
+		// Reverse vertical velocity of ball if it collides with top pad.
+		ball.detectAIPadCollision(height, padH, padW, aiPad.getX(), inset);
+
+		// Move the ball one frame, as dictated by the current velocities.
+		ball.updatePos();
+		
+		// Move the AI paddle as dictated by the ball position.
+		aiPad.updatePos(ball.getX(), width);
+		
+		/*
+		 * This is a method of JPanel; in fact, the no-parameter version comes from the superclass
+		 * Component. In effect, this calls the paintComponent() method which we overrode above. I
+		 * think it also first gets rid of the previously drawn image (so things don't get drawn on
+		 * top of each other).
+		 */
+		repaint();
+	}
+	
+
 	/*
 	 * The @Override just indicates that we are overriding a method from a superclass (in
 	 * this case javax.swing.JPanel).
@@ -159,112 +221,27 @@ public class OnePlayer extends JPanel implements KeyListener, ActionListener {
 		g2d.drawString(scoreB, 10, height / 2);
 		g2d.drawString(scoreT, width - 50, height / 2);
 	}
-	
-	// The following method is that which is called on each iteration of the game loop.
-	@Override
-	public void actionPerformed(ActionEvent e) {
 		
-		// Reverse horizontal velocity of ball if it collides with the left or right walls.
-		ball.detectLRCollision(width);
-		
-		/*
-		 * Reverse vertical velocity of ball, and record which wall was hit, if it collides with
-		 * the top or bottom walls (in my reworking of this, we could change this so that if it
-		 * collides with top or bottoms walls, the ball gets reset in the middle with a fixed velocity).
-		 */
-		String scorer = ball.detectTBCollision(height);
-		//Update scores, depending on which wall was hit.
-		if (scorer=="T") {
-			scores.bottomScores();
-		}
-		if (scorer=="B") {
-			scores.topScores();
-		}
-		
-		// Reverse vertical velocity of ball if it collides with bottom pad.
-		ball.detectPlayerPadCollision(height, padH, padW, playerPad.getX(), inset);
-		
-		// Reverse vertical velocity of ball if it collides with top pad.
-		ball.detectAIPadCollision(height, padH, padW, aiPad.getX(), inset);
-
-		// Move the ball one frame, as dictated by the current velocities.
-		ball.updatePos();
-		
-		// Move the player's paddle as dictated by key presses.
-		playerPad.updatePos(keys, width);
-		
-		// Move the AI paddle as dictated by the ball position.
-		aiPad.updatePos(ball.getX(), width);
-		
-		/*
-		 * This is a method of JPanel; in fact, the no-parameter version comes from the superclass
-		 * Component. In effect, this calls the paintComponent() method which we overrode above. I
-		 * think it also first gets rid of the previously drawn image (so things don't get drawn on
-		 * top of each other).
-		 */
-		repaint();
-	}
-
 	/*
-	 * The following methods process the keystrokes which are received. Since Game implements the 
-	 * keyListener interface, these are sensitive to keystrokes: the former is called whenever a key
-	 * is pressed, the latter whenever one is released. Which key was pressed or released is recorded in
-	 * the KeyEvent parameter e.
-	 * 
-	 * Looking at the documentation, one sees that the KeyEvent class has a large number of statics,
-	 * which are essentially numbers indexing the various keys which could be pressed. So, for instance,
-	 * e.VK_A is a static int which gives some number (in this case the same as the ASCII number)
-	 * representing the "A" key.
-	 * 
-	 * On the other hand, there is a method called getKeyCode, which returns the number corresponding to
-	 * the key which has been pressed. So in the methods below, code is the integer corresponding to
-	 * the pressed key, and the switch statement compares code to the values KeyEvent.VK_LEFT,
-	 * KeyEvent.VK_RIGHT to see if they agree.
+	 * The following nested classes respond to left and right keystrokes, via the key bindings
+	 * which are initialised in the constructor.
 	 */
-	@Override
-	public void keyPressed(KeyEvent e) {
-		int code = e.getKeyCode();
-		switch (code) {
-		case KeyEvent.VK_LEFT:
-			keys.add("LEFT");
-			break;
-		case KeyEvent.VK_RIGHT:
-			keys.add("RIGHT");
-			break;
-		case KeyEvent.VK_A:
-			System.out.println("A pressed");
-			keys.add("A");
-			break;
-		case KeyEvent.VK_D:
-			System.out.println("D pressed");
-			keys.add("D");
-			break;
+	public class LeftAction extends AbstractAction {
+		public LeftAction() {}
+		
+		public void actionPerformed(ActionEvent e) {
+			System.out.println("OnePlayer.LeftAction");
+			playerPad.moveLeft();
 		}
 	}
 	
-	@Override
-	public void keyReleased(KeyEvent e) {
-		int code = e.getKeyCode();
-		switch (code) {
-		case KeyEvent.VK_LEFT:
-			keys.remove("LEFT");
-			break;
-		case KeyEvent.VK_RIGHT:
-			keys.remove("RIGHT");
-			break;
-		case KeyEvent.VK_A:
-			System.out.println("A released");
-			keys.remove("A");
-			break;
-		case KeyEvent.VK_D:
-			System.out.println("D released");
-			keys.remove("D");
-			break;
+	public class RightAction extends AbstractAction {
+		public RightAction() {}
+		
+		public void actionPerformed(ActionEvent e) {
+			System.out.println("OnePlayer.RightAction");
+			playerPad.moveRight(width);
 		}
-	}
-	
-	@Override
-	public void keyTyped(KeyEvent e) {
 	}
 	
 	/*
@@ -272,6 +249,11 @@ public class OnePlayer extends JPanel implements KeyListener, ActionListener {
 	 * a game without creating a new OnePlayer object.
 	 */
 	public void resetState() {
+		// Set focusable attributes so that the key bindings will work.
+		setFocusable(true);
+		setFocusTraversalKeysEnabled(false);
+		
+		// Reset the positions and velocities of all the objects.
 		int height = getHeight();
 		int width = getWidth();
 		playerPad.resetState(padH, padW, width/2 - padW/2, BOTTOM_SPEED, height, inset,2);
@@ -279,6 +261,7 @@ public class OnePlayer extends JPanel implements KeyListener, ActionListener {
 		ball.resetState(width/2 - ballSize/2, height/2 - ballSize/2, ballSize, INIT_VEL_X, INIT_VEL_Y);
 		scores.resetState();
 		first = true;
+		
 		t.start();
 	}
 }
