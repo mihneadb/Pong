@@ -9,9 +9,18 @@ import javax.swing.*;
  * This class controls the behaviour of the game when we are in the title screen phase. This is the
  * phase which initially appears when the game is run.
  */
-public class TitleScreen extends JPanel implements KeyListener, ActionListener {
+public class TitleScreen extends JPanel implements ActionListener {
 
+	// Used to execute special code on the first iteration of the timer; see below.
 	private boolean first = true;
+	
+	// Action objects to process key events.
+	private LeftAction leftAction = new LeftAction();
+	private RightAction rightAction = new RightAction();
+	private SpaceAction spaceAction = new SpaceAction();
+	
+	// Set of strings to keep track of currently pressed buttons.
+	private HashSet<String> keys = new HashSet<String>();
 	
 	// GraphicsTools object to allow us access to the methods in the GraphicsTools class.
 	private GraphicsTools graphicsTools = new GraphicsTools();
@@ -35,16 +44,53 @@ public class TitleScreen extends JPanel implements KeyListener, ActionListener {
 	// Timer: to update the screen to respond to key presses.
 	private Timer t = new Timer(50,this);
 	
-	// Set of strings to keep track of key presses.
-	private HashSet<String> keys = new HashSet<String>();
-	
 	/*
-	 * Constructor method. Since our instantiation of this class will be as a field in a Game
+	 * Constructor method. Since our instantiation of this class will be as a field in a GameFrame
 	 * object, the constructor is called right at the start of the program. This will be true for all
-	 * our phase objects in game.
+	 * our phase objects in gameFrame.
 	 */
 	public TitleScreen() {
+		/*
+		 * We assign the key bindings which will determine how this component reacts to input. 
+		 * A word on the key bindings here. The method getInputMap() takes an integer argument, which 
+		 * is one of: Component.WHEN_FOCUSED, Component.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT and 
+		 * Component.WHEN_IN_FOCUSED_WINDOW. The argument determines when the corresponding action
+		 * methods will be called in response to key strokes. In our case, the window GameFrame
+		 * always has focused, so we want to react to keystrokes when our panel (OnePlayer) is
+		 * in the frame.
+		 */
+		InputMap inputMap = getInputMap(TitleScreen.WHEN_IN_FOCUSED_WINDOW);
+		ActionMap actionMap = getActionMap();
+		
+		inputMap.put(KeyStroke.getKeyStroke("pressed LEFT"), "LEFT");
+		actionMap.put("LEFT", leftAction);
+		
+		inputMap.put(KeyStroke.getKeyStroke("pressed RIGHT"), "RIGHT");
+		actionMap.put("RIGHT", rightAction);
+		
+		inputMap.put(KeyStroke.getKeyStroke("SPACE"), "SPACE");
+		actionMap.put("SPACE", spaceAction);
+		
+		// Start the timer that implements the game loop for this component.
 		t.start();
+	}
+	
+	/*
+	 * The action to be performed on each iteration of the timer; in this case, repainting
+	 * the component (i.e. the above method).
+	 */
+	@Override
+	public void actionPerformed(ActionEvent e) {
+
+		// Reset the button positions (this only needs to be do once).
+		if (first) {
+			int height = getHeight();
+			int width = getWidth();
+			resetButtonPositions(height,width);
+			first = false;
+		}
+		// Repaint the Component (see the paintComponent() method above).
+		repaint();
 	}
 	
 	/*
@@ -53,18 +99,9 @@ public class TitleScreen extends JPanel implements KeyListener, ActionListener {
 	 */
 	@Override
 	protected void paintComponent(Graphics g) {
-		
 		super.paintComponent(g);
 		Graphics2D g2d = (Graphics2D) g;
-
-		// Reset the button positions (this only needs to be do once).
-		int height = getHeight();
-		int width = getWidth();
-		if (first) {
-			resetButtonPositions(height,width);
-			first = false;
-		}
-	
+		
 		/*
 		 * Draw the header. Be careful; there is something strange happening here with variables
 		 * passed into the methods having their values changed (perhaps some data encapsulation
@@ -129,86 +166,76 @@ public class TitleScreen extends JPanel implements KeyListener, ActionListener {
 		twoPlayersButton.y = 2*(height/3);
 	}
 
-	/*
-	 * The action to be performed on each iteration of the timer; in this case, repainting
-	 * the component (i.e. the above method).
-	 */
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		// Use the keys dictionary to update which button is currently selected.
-		updateCurrentSelection(keys);
-		// Repaint the Component (see the paintComponent() method above).
-		repaint();
-	}
 
 	/*
-	 * We override the abstract (i.e. empty) classes inherited from the keyListener interface, as we
-	 * must. In this case, they simply record the relevant key presses (left and right) in a set.
-	 * The response to said key presses (in this case, to update the currentSelection field) is given
-	 * by the updateCurrentSelection method below.
-	 * 
-	 * These methods are not called directly in response to key presses, because we never call
-	 * addKeyListener(titleScreen). Rather, the corresponding methods in the Game class are
-	 * called in response to key presses, and those methods in turn call the methods here if
-	 * the current phase of the game demands it.
-	 * 
-	 * Why do we do this? Because there are certain keys which, if pressed while in the title screen
-	 * phase, would require us to remove the title screen altogether. As such, they must be processed
-	 * in an external object.
-	 * 
-	 * In this case, that key is the spacebar, and one can see that the reaction to it is processed in
-	 * the keyPressed method of Game (it involves resetting the contentPane of the Game object).
-	*/
-	@Override
-	public void keyPressed(KeyEvent e) {
-		int code = e.getKeyCode();
-		switch (code) {
-		case KeyEvent.VK_RIGHT:
-			keys.add("RIGHT");
-			break;
-		case KeyEvent.VK_LEFT:
-			keys.add("LEFT");
-			break;
-		}		
-	}
-
-	@Override
-	public void keyReleased(KeyEvent e) {
-		int code = e.getKeyCode();
-		switch (code) {
-		case KeyEvent.VK_RIGHT:
-			keys.remove("RIGHT");
-			break;
-		case KeyEvent.VK_LEFT:
-			keys.remove("LEFT");
-			break;
-		}	
-	}
-	
-	@Override
-	public void keyTyped(KeyEvent e) {
-	}
-	
-	/*
-	 *  This method updates the currentSelection variable depending on which key is pressed. Since 
-	 *  we only have two buttons, the code below works fine, but if we eventually add more then we 
-	 *  need to be a bit more careful.
+	 * The following nested classes are Action classes, which control this component's response
+	 * to keystrokes, via the key bindings which are set in the constructor.
 	 */
-	private void updateCurrentSelection(HashSet<String> keys) {
-		/*
-		 * Updates the current button selection given the input data of the keys.
-		 */
-		if (keys.size() == 1) {
-			if (keys.contains("RIGHT")) {
-				currentSelection = "2Players";
-			}
-			if (keys.contains("LEFT")) {
-				currentSelection = "1Player";
+	public class LeftAction extends AbstractAction {
+		public LeftAction() {}
+		
+		public void actionPerformed(ActionEvent e) {
+			System.out.println("TitleScreen.LeftAction");
+			currentSelection = "1Player";
+		}
+	}
+	
+	public class RightAction extends AbstractAction {
+		public RightAction() {}
+		
+		public void actionPerformed(ActionEvent e) {
+			System.out.println("TitleScreen.RightAction");
+			currentSelection = "2Players";
+		}
+	}
+	
+	public class SpaceAction extends AbstractAction {
+		public SpaceAction() {}
+	
+		public void actionPerformed(ActionEvent e) {
+			System.out.println("TitleScreen.SpaceAction");
+			/*
+			 *  We have to move to the next phase, depending on the value of currentSelection. But
+			 *  in either case, we have to call a method of the containing GameFrame. Trying to work
+			 *  out how to do this caused me a lot of headaches, but eventually I worked it out.
+			 *  
+			 *  We first assign our containing GameFrame to a local variable name. TitleScreen.this
+			 *  gives us the TitleScreen object containing this SpaceAction object (in our case,
+			 *  just titleScreen), and SwingUtilities.getWindowAncestor(x) returns the window 
+			 *  containing x. Then the (GameFrame) passes that window to the GameFrame class, so 
+			 *  that we end up with an object of type GameFrame (in fact, we end up with gameFrame).
+			 */
+			GameFrame gameFrame = (GameFrame) SwingUtilities.getWindowAncestor(TitleScreen.this);
+			/*
+			 * Now we make the choice, depending on currentSelection.
+			 */
+			switch (currentSelection) {
+			case "1Player":
+				gameFrame.switchToOnePlayer();
+				break;
+			case "2Players":
+				// We haven't implemented two player mode yet.
+				break;
 			}
 		}
 	}
 	
 	public void resetState() {
+		/*
+		 * The documentation for setFocusable does not explain things very well. But there is a
+		 * StackOverflow answer which seems to say: when a Component is in focus, it is the Component
+		 * which reacts to input via key bindings; it will be *its* action classes which are invoked.
+		 * 
+		 * For us, this should be the current component. Although it should be focusable by default, let
+		 * us be careful and explicitly set it (this is what setFocusable(true) does).
+		 * 
+		 * As for the second line: reading the documentation, it seems that there is some subtle issue
+		 * about how key strokes are recorded (and consequently which methods are called). Let us pass
+		 * over this for the moment, and come back to it later if it causes any problems (I don't
+		 * think it will).
+		 */
+//		setFocusable(true);
+//		setFocusTraversalKeysEnabled(false);
 		currentSelection = "1Player";
 		first = true;
 	}
