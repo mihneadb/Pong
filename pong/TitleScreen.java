@@ -19,6 +19,9 @@ public class TitleScreen extends JPanel implements ActionListener {
 	private RightAction rightAction = new RightAction();
 	private SpaceAction spaceAction = new SpaceAction();
 	
+	// Set of strings to keep track of currently pressed buttons.
+	private HashSet<String> keys = new HashSet<String>();
+	
 	// GraphicsTools object to allow us access to the methods in the GraphicsTools class.
 	private GraphicsTools graphicsTools = new GraphicsTools();
 		
@@ -56,12 +59,17 @@ public class TitleScreen extends JPanel implements ActionListener {
 		 * always has focused, so we want to react to keystrokes when our panel (OnePlayer) is
 		 * in the frame.
 		 */
-		getInputMap(TitleScreen.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("LEFT"), "LEFT");
-		getActionMap().put("LEFT", leftAction);
-		getInputMap(TitleScreen.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("RIGHT"), "RIGHT");
-		getActionMap().put("RIGHT", rightAction);
-		getInputMap(TitleScreen.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("SPACE"), "SPACE");
-		getActionMap().put("SPACE", spaceAction);
+		InputMap inputMap = getInputMap(TitleScreen.WHEN_IN_FOCUSED_WINDOW);
+		ActionMap actionMap = getActionMap();
+		
+		inputMap.put(KeyStroke.getKeyStroke("pressed LEFT"), "LEFT");
+		actionMap.put("LEFT", leftAction);
+		
+		inputMap.put(KeyStroke.getKeyStroke("pressed RIGHT"), "RIGHT");
+		actionMap.put("RIGHT", rightAction);
+		
+		inputMap.put(KeyStroke.getKeyStroke("SPACE"), "SPACE");
+		actionMap.put("SPACE", spaceAction);
 		
 		// Start the timer that implements the game loop for this component.
 		t.start();
@@ -197,13 +205,13 @@ public class TitleScreen extends JPanel implements ActionListener {
 			 *  containing x. Then the (GameFrame) passes that window to the GameFrame class, so 
 			 *  that we end up with an object of type GameFrame (in fact, we end up with gameFrame).
 			 */
-			GameFrame frame = (GameFrame) SwingUtilities.getWindowAncestor(TitleScreen.this);
+			GameFrame gameFrame = (GameFrame) SwingUtilities.getWindowAncestor(TitleScreen.this);
 			/*
 			 * Now we make the choice, depending on currentSelection.
 			 */
 			switch (currentSelection) {
 			case "1Player":
-				frame.switchToOnePlayer();
+				gameFrame.switchToOnePlayer();
 				break;
 			case "2Players":
 				// We haven't implemented two player mode yet.
@@ -226,8 +234,8 @@ public class TitleScreen extends JPanel implements ActionListener {
 		 * over this for the moment, and come back to it later if it causes any problems (I don't
 		 * think it will).
 		 */
-		setFocusable(true);
-		setFocusTraversalKeysEnabled(false);
+//		setFocusable(true);
+//		setFocusTraversalKeysEnabled(false);
 		currentSelection = "1Player";
 		first = true;
 	}

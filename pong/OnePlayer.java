@@ -19,8 +19,14 @@ import pong.TitleScreen.RightAction;
 public class OnePlayer extends JPanel implements ActionListener {
 	
 	// Action objects to pass to getActionMap().
-	private LeftAction leftAction = new LeftAction();
-	private RightAction rightAction = new RightAction();
+	private PressedLeft pressedLeft = new PressedLeft();
+	private ReleasedLeft releasedLeft = new ReleasedLeft();
+	private PressedRight pressedRight = new PressedRight();
+	private ReleasedRight releasedRight = new ReleasedRight();
+	private PressedEsc pressedEsc = new PressedEsc();
+	
+	// Set object to keep track of the currently pressed keys.
+	private HashSet<String> keys = new HashSet<String>();
 	
 	// Variables to record the height and width of the panel.
 	private int height = getHeight();
@@ -52,7 +58,7 @@ public class OnePlayer extends JPanel implements ActionListener {
 	public boolean first = true;
 	
 	// Variables for the initial states of the paddles.
-	private final int BOTTOM_SPEED = 10;
+	private final int BOTTOM_SPEED = 2;
 	private final int TOP_SPEED = 2;
 	private int padH = 10, padW = 40;
 	private int inset = 10;
@@ -105,10 +111,24 @@ public class OnePlayer extends JPanel implements ActionListener {
 		 * There is also a getInputMap() method without any arguments, which is simply the above method
 		 * with the default JComponent.WHEN_FOCUSED argument.
 		 */
-		getInputMap(OnePlayer.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("LEFT"), "LEFT");
-		getActionMap().put("LEFT", leftAction);
-		getInputMap(OnePlayer.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("RIGHT"), "RIGHT");
-		getActionMap().put("RIGHT", rightAction);
+		InputMap inputMap = getInputMap(OnePlayer.WHEN_IN_FOCUSED_WINDOW);
+		ActionMap actionMap = getActionMap();
+		
+		inputMap.put(KeyStroke.getKeyStroke("pressed LEFT"), "pressed LEFT");
+		actionMap.put("pressed LEFT", pressedLeft);
+		
+		inputMap.put(KeyStroke.getKeyStroke("released LEFT"), "released LEFT");
+		actionMap.put("released LEFT", releasedLeft);
+		
+		inputMap.put(KeyStroke.getKeyStroke("pressed RIGHT"), "pressed RIGHT");
+		actionMap.put("pressed RIGHT", pressedRight);
+		
+		inputMap.put(KeyStroke.getKeyStroke("released RIGHT"), "released RIGHT");
+		actionMap.put("released RIGHT", releasedRight);
+	
+		inputMap.put(KeyStroke.getKeyStroke("pressed ESCAPE"), "pressed ESC");
+		actionMap.put("pressed ESC", pressedEsc);
+		
 		resetState();
 	}
 	
@@ -142,6 +162,12 @@ public class OnePlayer extends JPanel implements ActionListener {
 		// Move the ball one frame, as dictated by the current velocities.
 		ball.updatePos();
 		
+		/*
+		 *  Update the position of the player's pad, as dictated by the set keys of currently
+		 *  pressed keys, and the width of the frame.
+		 */
+		playerPad.updatePos(keys, width);
+		
 		// Move the AI paddle as dictated by the ball position.
 		aiPad.updatePos(ball.getX(), width);
 		
@@ -154,7 +180,6 @@ public class OnePlayer extends JPanel implements ActionListener {
 		repaint();
 	}
 	
-
 	/*
 	 * The @Override just indicates that we are overriding a method from a superclass (in
 	 * this case javax.swing.JPanel).
@@ -224,34 +249,68 @@ public class OnePlayer extends JPanel implements ActionListener {
 		
 	/*
 	 * The following nested classes respond to left and right keystrokes, via the key bindings
-	 * which are initialised in the constructor.
+	 * which are initialised in the constructor. As we can see, the only action is to add or 
+	 * remove from the "keys" set; this set is then passed to playerPad.udpatePos(-) on each
+	 * call of the timer; this way we keep the movement of the player's pad synchronised with
+	 * the frame rate.
 	 */
-	public class LeftAction extends AbstractAction {
-		public LeftAction() {}
-		
+	public class PressedLeft extends AbstractAction {
+		public PressedLeft() {}	
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("OnePlayer.LeftAction");
-			playerPad.moveLeft();
+			System.out.println("OnePlayer.PressedLeft");
+			keys.add("LEFT");
 		}
 	}
 	
-	public class RightAction extends AbstractAction {
-		public RightAction() {}
-		
+	public class ReleasedLeft extends AbstractAction{
+		public ReleasedLeft(){}
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("OnePlayer.RightAction");
-			playerPad.moveRight(width);
+			System.out.println("OnePlayer.ReleasedLeft");
+			keys.remove("LEFT");
 		}
 	}
+	
+	public class PressedRight extends AbstractAction {
+		public PressedRight() {}	
+		public void actionPerformed(ActionEvent e) {
+			System.out.println("OnePlayer.PressedRight");
+			keys.add("RIGHT");
+		}
+	}
+	
+	public class ReleasedRight extends AbstractAction {
+		public ReleasedRight() {}
+		public void actionPerformed(ActionEvent e) {
+			System.out.println("OnePlayer.ReleasedRight");
+			keys.remove("RIGHT");
+		}
+	}
+	
+	/*
+	 * The following action class is different to those above: we don't just add to keys, because
+	 * pressing escape causes a different event to occur (namely leaving the current game).
+	 */
+	public class PressedEsc extends AbstractAction {
+		public PressedEsc() {}
+		public void actionPerformed(ActionEvent e) {
+			System.out.println("OnePlayer.PressedEsc");
+			GameFrame gameFrame = (GameFrame) SwingUtilities.getWindowAncestor(OnePlayer.this);
+			gameFrame.switchToTitleScreen();
+		}
+	}
+	
 	
 	/*
 	 * A simple method which resets the object to its initial state. Used when we want to restart
 	 * a game without creating a new OnePlayer object.
 	 */
 	public void resetState() {
-		// Set focusable attributes so that the key bindings will work.
-		setFocusable(true);
-		setFocusTraversalKeysEnabled(false);
+		/*
+		 *  Set focusable attributes so that the key bindings will work (maybe these don't
+		 *  actually do anything?).
+		 */
+//		setFocusable(true);
+//		setFocusTraversalKeysEnabled(false);
 		
 		// Reset the positions and velocities of all the objects.
 		int height = getHeight();

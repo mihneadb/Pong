@@ -28,12 +28,24 @@ public class PlayerPad extends Pad {
 		y = height - inset - padH;
 	}
 	
-	public void moveRight(int width) {
-		this.x += (x < width - this.width) ? speed : 0;
-	}
-	
-	public void moveLeft() {
-		this.x -= (x > 0) ? speed : 0;	
+	public void updatePos(HashSet<String> keys, int width) {
+		if (keys.size() == 1) {
+			if (keys.contains("LEFT")) {
+				/*
+				 * The mathematical operation here reads: subtract from this.x: SPEED if 
+				 * this.x > 0, otherwise 0. In other words, move the bottom pad left unless
+				 * it is already as far left as it can go.
+				 */
+				x -= (x > 0) ? speed : 0;
+			}
+			else if (keys.contains("RIGHT")) {
+				/*
+				 * Similarly here: move the bottom pad right, unless it is already as far right as
+				 * it can go.
+				 */
+				x += (x < width - this.width) ? speed : 0;
+			}
+		}
 	}
 	
 }
