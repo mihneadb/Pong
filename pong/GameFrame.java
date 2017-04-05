@@ -31,6 +31,7 @@ public class GameFrame extends JFrame {
 	// Instantiate objects controlling each of the phases.
 	TitleScreen titleScreen = new TitleScreen();
 	OnePlayer onePlayer = new OnePlayer();
+	TwoPlayers twoPlayers = new TwoPlayers();
 		
 	// In the constructor we set-up the frame and put the titleScreen inside it.
 	public GameFrame() {
@@ -63,4 +64,13 @@ public class GameFrame extends JFrame {
 		onePlayer.first = true;
 	}
 
+	// Method to switch to the two player phase.
+	public void switchToTwoPlayers() {
+		setSize(GAME_WIDTH,GAME_HEIGHT);
+		setContentPane(twoPlayers);
+		setVisible(true);
+		twoPlayers.first = true;
+	}
+
+	
 }

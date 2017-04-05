@@ -205,6 +205,8 @@ public class TitleScreen extends JPanel implements ActionListener {
 			 *  containing x. Then the (GameFrame) passes that window to the GameFrame class, so 
 			 *  that we end up with an object of type GameFrame (in fact, we end up with gameFrame).
 			 */
+			t.stop();
+			
 			GameFrame gameFrame = (GameFrame) SwingUtilities.getWindowAncestor(TitleScreen.this);
 			/*
 			 * Now we make the choice, depending on currentSelection.
@@ -214,7 +216,7 @@ public class TitleScreen extends JPanel implements ActionListener {
 				gameFrame.switchToOnePlayer();
 				break;
 			case "2Players":
-				// We haven't implemented two player mode yet.
+				gameFrame.switchToTwoPlayers();
 				break;
 			}
 		}
@@ -237,6 +239,7 @@ public class TitleScreen extends JPanel implements ActionListener {
 //		setFocusable(true);
 //		setFocusTraversalKeysEnabled(false);
 		currentSelection = "1Player";
+		t.start();
 		first = true;
 	}
 
